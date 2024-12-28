@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:8.0.3
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: my_password
+    ports:
+      - "27027:27017"
+  video-redis:
+    image: redis:7.2.4-alpine
+    restart: always
+    command: redis-server
+    ports:
+      - "26391:6379"
