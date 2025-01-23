@@ -6,7 +6,8 @@ import { TechService } from './tech.service';
 import { TechController } from './tech.controller';
 import { S3 } from 'providers/S3';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SearchApp, SearchAppSchema } from "schemas/searchApp.scheme";
+import { SearchApp, SearchAppSchema } from 'schemas/searchApp.scheme';
+import { TelegramAPI } from '../../providers/Telegram';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { SearchApp, SearchAppSchema } from "schemas/searchApp.scheme";
     providers: [
         TechService,
         S3,
+        TelegramAPI,
     ],
     exports: [],
 })

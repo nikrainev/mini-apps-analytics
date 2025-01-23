@@ -7,11 +7,12 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: my_password
+    volumes:
+      - /etc/mongodbdata-apps:/data/db
     ports:
       - "27027:27017"
-  video-redis:
-    image: redis:7.2.4-alpine
-    restart: always
-    command: redis-server
-    ports:
-      - "26391:6379"
+
+networks:
+  default:
+    external:
+      name: mini-apps
