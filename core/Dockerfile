@@ -1,19 +1,18 @@
-FROM node:22.10.0-alpine
+FROM --platform=linux/amd64 node:22.10.0-alpine as builder
 
 WORKDIR /app
 
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
-
-RUN chmod +x /wait
-
-COPY ./package*.json ./
-
-RUN npm ci --silent --also=dev
+# Install app dependencies
+RUN npm install
 
 COPY . .
 
 RUN npm run build
 
-EXPOSE 3002
+FROM node:22.10.0-alpine
 
-CMD ["/bin/sh", "-c", "/wait && npm run start:prod"]
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
+
+CMD [ "npm", "run", "start:prod" ]
