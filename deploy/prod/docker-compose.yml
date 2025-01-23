@@ -34,7 +34,7 @@ services:
     links:
       - mongo
     ports:
-      - "3021:3001"
+      - "3031:3001"
 
 networks:
   default:
