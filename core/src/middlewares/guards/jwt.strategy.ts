@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { MyLogger } from 'config/MyLogger';
 
 const headersExtractor = function(req:FastifyRequest) {
-    return req.headers?.authorization?.split(' ')?.[1];
+    return req.headers?.authorization?.split(' ')?.[1] || null;
 };
 
 @Injectable()
