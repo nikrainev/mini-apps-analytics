@@ -5,7 +5,7 @@ import {
     Inject,
     Get,
     UseInterceptors,
-    Query
+    Query,
 } from '@nestjs/common';
 
 import { TechService } from './tech.service';
@@ -28,5 +28,10 @@ export class TechController {
         @Query('query') query:string,
     ):Promise<ILoadInfoResponse> {
         return this.techService.loadInfo(query);
+    }
+
+    @Get('/bot-info')
+    async loadBotInfo():Promise<any> {
+        return this.techService.getBotInfo();
     }
 }

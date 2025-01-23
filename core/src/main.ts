@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import {
-    FastifyAdapter,
-    NestFastifyApplication,
+  FastifyAdapter,
+  NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { HttpAdapterHost } from '@nestjs/core';
 
@@ -11,18 +11,18 @@ import { ValidationPipe } from './middlewares/validation.pipe';
 import { AllExceptionsFilter } from './middlewares/all-exceptions.filter';
 
 async function bootstrap() {
-    const app = await NestFactory.create<NestFastifyApplication>(
-        AppModule,
-        new FastifyAdapter(),
-    );
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+  );
 
-    const { httpAdapter } = app.get(HttpAdapterHost);
-    app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
-    app.useGlobalPipes(new ValidationPipe());
-    app.enableCors({
-        origin: '*',
-    });
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+  app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({
+    origin: '*',
+  });
 
-    await app.listen(vars.port, '0.0.0.0');
+  await app.listen(vars.port, '0.0.0.0');
 }
 bootstrap();
