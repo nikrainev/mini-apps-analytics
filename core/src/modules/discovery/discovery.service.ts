@@ -18,6 +18,7 @@ export class DiscoveryService {
 
     @Cron(CronExpression.EVERY_5_MINUTES)
     async handleCron() {
+        return;
         const randomDelay = getRandomArbitrary({
             min: 0,
             max: 120000,
@@ -31,7 +32,7 @@ export class DiscoveryService {
 
         if (currentQuery) {
             await this.appCenterQuery.updateOne({
-                _id: currentQuery._id,
+                _id: currentQuery?._id,
             }, {
                 query: nextQuery,
                 createdAt: new Date(),
@@ -74,7 +75,7 @@ export class DiscoveryService {
                         createdAt:  d.attributes.createdAt,
                         updatedAt:  d.attributes.updatedAt,
                         publishedAt:  d.attributes.publishedAt,
-                        findAt: now
+                        findAt: now,
                     },
                 },
             });
