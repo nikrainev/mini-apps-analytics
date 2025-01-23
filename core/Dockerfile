@@ -2,6 +2,7 @@ FROM --platform=linux/amd64 node:22.10.0-alpine as builder
 
 WORKDIR /app
 
+COPY package*.json ./
 # Install app dependencies
 RUN npm install
 
