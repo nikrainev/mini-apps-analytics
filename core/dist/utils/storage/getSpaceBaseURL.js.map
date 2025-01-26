@@ -1,0 +1,1 @@
+{"version":3,"file":"getSpaceBaseURL.js","sourceRoot":"","sources":["../../../src/utils/storage/getSpaceBaseURL.ts"],"names":[],"mappings":";;;AAAO,MAAM,eAAe,GAAG,CAAC,EAC5B,MAAM,EACN,QAAQ,GAIX,EAAS,EAAE;IACR,MAAM,aAAa,GAAG,QAAQ,CAAC,KAAK,CAAC,IAAI,CAAC,CAAC;IAC3C,OAAO,GAAG,aAAa,CAAC,CAAC,CAAC,KAAK,MAAM,IAAI,aAAa,CAAC,CAAC,CAAC,EAAE,CAAC;AAChE,CAAC,CAAC;AATW,QAAA,eAAe,mBAS1B"}
