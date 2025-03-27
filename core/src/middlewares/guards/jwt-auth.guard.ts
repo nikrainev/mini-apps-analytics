@@ -22,7 +22,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         const requiredRoles = this.reflector.getAllAndOverride<UserRoles[]>(ROLES_KEY, [
             context.getHandler(),
             context.getClass(),
-        ]);
+        ]) || [];
 
         this.requireRoles = requiredRoles;
 

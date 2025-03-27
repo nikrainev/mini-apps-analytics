@@ -1,6 +1,6 @@
 export const AuthCodes = {
-    authCacheNotFound: {
-        code: 'auth__auth_cache_not_found',
-        message: 'auth cache model for requested auth not found',
+    userNotFound: {
+        code: 'auth__user_not_found',
+        message: 'user with given params not found',
     },
 };

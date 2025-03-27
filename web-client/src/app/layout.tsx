@@ -3,11 +3,11 @@
 import React, { ReactElement } from 'react';
 
 import '../styles/globals.css';
-import { appWithTranslation } from 'next-i18next';
+import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 
 import AppContextProvider from '@/store/AppContextProvider';
 
-export const DEFAULT_TITLE = 'MiniApps';
+export const DEFAULT_TITLE = 'Empathy';
 
 function MyApp({
     children,
@@ -24,13 +24,15 @@ function MyApp({
                 <meta name="msapplication-TileColor" content="#ffc40d" />
             </head>
             <body>
-                <AppContextProvider>
-                    {children}
-                </AppContextProvider>
+                <ChakraProvider value={defaultSystem}>
+                    <AppContextProvider>
+                        {children}
+                    </AppContextProvider>
+                </ChakraProvider>
             </body>
         </html>
     );
 }
 
 // @ts-ignore
-export default appWithTranslation(MyApp);
+export default MyApp;

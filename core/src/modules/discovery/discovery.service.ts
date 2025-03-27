@@ -18,6 +18,7 @@ export class DiscoveryService {
 
     @Cron(CronExpression.EVERY_5_MINUTES)
     async handleCron() {
+        return;
         const randomDelay = getRandomArbitrary({
             min: 0,
             max: 120000,

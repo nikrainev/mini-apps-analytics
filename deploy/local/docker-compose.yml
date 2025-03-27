@@ -11,8 +11,3 @@ services:
       - /etc/mongodbdata-apps:/data/db
     ports:
       - "27027:27017"
-
-networks:
-  default:
-    external:
-      name: mini-apps

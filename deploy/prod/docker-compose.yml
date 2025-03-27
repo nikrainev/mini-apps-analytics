@@ -36,6 +36,30 @@ services:
     ports:
       - "3031:3001"
 
+  web-client:
+    build:
+      context: ../../core
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - NODE_ENV=prod
+      - APP_ENV=prod
+      - PORT=3001
+      - JWT_SALT=fdgdfghgkljk
+      - MONGO_CONNECTION_STRING=mongodb://mini-apps-admin:sfdwrg32434534@mongo:27017/admin?readPreference=primary&directConnection=true&ssl=false
+      - S3_ACCESS_KEY_ID=
+      - S3_SECRET_ACCESS_KEY=
+      - S3_RECORDINGS_BUCKET_NAME=
+      - S3_REGION=fra1
+      - S3_ENDPOINT=https://fra1.digitaloceanspaces.com
+      - WEB_CLIENT_URL=http://localhost:3001
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    ports:
+      - "3031:3001"
+
 networks:
   default:
     external:

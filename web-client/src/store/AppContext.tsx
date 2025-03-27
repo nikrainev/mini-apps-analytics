@@ -6,11 +6,12 @@ import React, {
     useEffect,
 } from 'react';
 
-import { useLocalSelector } from '@/shared/hooks';
 import { AppStore } from '@/store/AppStore';
+import { AuthStore } from '@/store/AuthStore';
 
 interface IContext {
-    appStore: AppStore
+    appStore: AppStore,
+    authStore: AuthStore
 }
 
 const AppContext = createContext({} as IContext);
@@ -23,12 +24,11 @@ interface PropsInterface {
 export const AppProvider = (props: PropsInterface) => {
     const { children } = props;
 
-    console.log('inited');
-
     return (
         <AppContext.Provider
             value={{
-                appStore: new AppStore()
+                appStore: new AppStore(),
+                authStore: new AuthStore()
             }}
         >
             {children}

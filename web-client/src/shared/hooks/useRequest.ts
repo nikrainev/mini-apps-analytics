@@ -14,16 +14,17 @@ import { isFunction } from '@/shared/utils/helpers/isFunction';
 import {
     generateHttpRequestCancelSource,
     sendHttpRequest,
+    IReqOptions
 } from '@/shared/utils/http/sendHttpRequest';
 
-export type RequestFunc<Req extends Record<string, any>> = (data?: Req, options?: any) => Promise<any>;
+export type RequestFunc<Req> = (data?: IRequest<Req>, options?: Record<string, any>) => Promise<unknown>;
 
-export interface IRequest<Req extends Record<string, any>> {
+export interface IRequest<Req> extends ReqBase<Req> {
     data?: Req;
     formData?: Record<string, unknown>;
     id?: string;
     nestedId?:  Record<string, string>;
-    params?: Record<string, string | number>;
+    params?: Record<string, string | number | undefined>;
     requestData?: any;
 }
 
@@ -43,13 +44,15 @@ export interface IResponseError {
     data?: any;
 }
 
-type ReqBase = Record<string, any>
+type ReqBase<R> = { data?: R } & Record<string, any>
 
-export interface IResponse<Req extends ReqBase, Res extends ReqBase> {
+export interface IResponse<Req, Res> {
     errors?: [IResponseError] | [],
     isProcessing?: boolean,
-    request: IRequest<Req>,
-    result: Res,
+    request: IRequest<ReqBase<Req>>,
+    result: {
+        data: Res
+    },
     status: RequestStatuses,
 }
 
@@ -62,10 +65,12 @@ interface IOptions {
     formatData?: (data: any) => any;
 }
 
-const DEFAULT_STATE: IResponse<ReqBase, ReqBase> = {
+const DEFAULT_STATE: IResponse<any, any> = {
     status: RequestStatuses.Initial,
     isProcessing: false,
-    result: {},
+    result: {
+        data: {}
+    },
     errors: [],
     request: {
         requestData: {},
@@ -85,21 +90,21 @@ function getUrl({ url, id, nestedId }:GetUrlOptions) {
     return url;
 }
 
-export const useRequest = <Req extends ReqBase, Res extends ReqBase>({
+export const useRequest = <Req, Res>({
     url,
-    method, 
+    method,
     withAbort,
     formatData
-}: IOptions):{
+}:IOptions):{
     state: IResponse<Req, Res>,
     onRequest: RequestFunc<Req>,
     onClearState: () => void
 } => {
-    const [state, setState] = useState<IResponse<ReqBase, ReqBase>>(DEFAULT_STATE);
-    const abortController = useRef<CancelTokenSource>(null);
+    const [state, setState] = useState<IResponse<Req, ReqBase<Res>>>(DEFAULT_STATE);
+    const abortController = useRef<CancelTokenSource | null>(null);
 
     const send = useCallback(
-        async (request: IRequest<Req> = {}, { ignoreErrors }: IRequestOptions = {}) => {
+        async (request: IRequest<ReqBase<Req>> = {}, { ignoreErrors = true }: IRequestOptions = {}) => {
             const { data, id, params, nestedId } = request;
 
             if (withAbort && abortController.current) {
@@ -115,13 +120,15 @@ export const useRequest = <Req extends ReqBase, Res extends ReqBase>({
             });
 
             try {
-                const result = await sendHttpRequest({
+                const reqArgs:IReqOptions = {
                     url: getUrl({ url, id, nestedId }),
                     method,
                     data,
                     params,
                     cancelToken: abortController.current?.token,
-                });
+                };
+
+                const result = await sendHttpRequest(reqArgs);
                 setState({
                     ...DEFAULT_STATE,
                     isProcessing: false,
@@ -134,7 +141,7 @@ export const useRequest = <Req extends ReqBase, Res extends ReqBase>({
                 if (e?.name !== 'AbortError') {
                     let status = RequestStatuses.Failed;
 
-                    if (e[0]?.statusCode === 401) {
+                    if (e?.[0]?.statusCode === 401) {
                         status = RequestStatuses.Unauthorized;
                     }
 
@@ -156,12 +163,12 @@ export const useRequest = <Req extends ReqBase, Res extends ReqBase>({
     );
 
     const onRequest: RequestFunc<Req> = useCallback(
-        (data: IRequest<Req> = {}, options: IRequestOptions = {}) => {
+        (data: (IRequest<Req> | undefined) = {}, options: IRequestOptions = {}) => {
             if (formatData) {
                 const prepared = formatData(data);
                 return send(prepared, options);
             }
-            return send(data, options);
+            return send(data as any, options);
         },
         [formatData, send],
     );

@@ -9,11 +9,10 @@ import { JwtStrategy } from './middlewares/guards/jwt.strategy';
 import { TechModule } from './modules/tech/tech.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DiscoveryModule } from './modules/discovery/discovery.module';
-import { PresentationModule } from './modules/presentation/presentation.module';
-import { ProcessingModule } from './modules/processing/processing.module';
-import { TrackingModule } from './modules/tracking/tracking.module';
 import { vars } from './config/vars';
 import { MyLogger } from './config/MyLogger';
+import { User, UserSchema } from './schemas/user.scheme';
+import { PersonModule } from './modules/person/person.module';
 
 const {
     mongo: {
@@ -30,14 +29,12 @@ const {
         }),
         TechModule,
         AuthModule,
+        PersonModule,
         DiscoveryModule,
-        PresentationModule,
-        ProcessingModule,
-        TrackingModule,
         MongooseModule.forRoot(connectionString),
         ScheduleModule.forRoot(),
         MongooseModule.forFeature(
-            []),
+            [{ name: User.name, schema: UserSchema } ]),
     ],
     controllers: [],
     providers: [

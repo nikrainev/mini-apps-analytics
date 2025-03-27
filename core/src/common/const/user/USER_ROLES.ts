@@ -1,7 +1,6 @@
 export enum UserRoles {
     Admin = 'Admin',
-    Pupil = 'Pupil',
-    Teacher = 'Teacher'
+    Customer = 'Customer'
 }
 
 export type UserRole = `${UserRoles}`;

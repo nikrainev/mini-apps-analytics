@@ -6,7 +6,7 @@ export function generateHttpRequestCancelSource() {
     return axios.CancelToken.source();
 }
 
-interface IOptions {
+export interface IReqOptions {
     method: RequestMethod;
     url: string;
     data?: Record<string, any>;
@@ -17,7 +17,7 @@ interface IOptions {
     cancelToken?: any;
 }
 
-export async function sendHttpRequest(options: IOptions) {
+export async function sendHttpRequest(options: IReqOptions) {
     const { method = 'get', url, data, formData, params, headers, onUploadProgress, cancelToken } = options ?? {};
 
     try {
@@ -28,6 +28,7 @@ export async function sendHttpRequest(options: IOptions) {
                 headers,
                 onUploadProgress,
                 cancelToken,
+                withCredentials: true,
             })
             : await axios({
                 url,
@@ -37,6 +38,7 @@ export async function sendHttpRequest(options: IOptions) {
                 headers,
                 onUploadProgress,
                 cancelToken,
+                withCredentials: true,
             });
 
         return response.data;
@@ -45,7 +47,7 @@ export async function sendHttpRequest(options: IOptions) {
     }
 }
 
-export async function sendAxiosRequest(options: IOptions): Promise<any> {
+export async function sendAxiosRequest(options: IReqOptions): Promise<any> {
     const {
         method = 'get',
         url,
