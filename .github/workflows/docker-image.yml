@@ -13,8 +13,8 @@ jobs:
     steps:
         - uses: actions/checkout@v3
         - name: Build the Docker image
-        - run: docker-compose --compatibility -f deploy/prod/docker-compose.yml up -d --force-recreate --build
-          env:
+          run: docker-compose --compatibility -f deploy/prod/docker-compose.yml up -d --force-recreate --build
+        - env:
             PORT: ${{ vars.PORT }}
             JWT_SALT: ${{ vars.JWT_SALT }}
             MONGO_CONNECTION_STRING: ${{ vars.MONGO_CONNECTION_STRING }}
