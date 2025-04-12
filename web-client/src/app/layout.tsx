@@ -7,7 +7,7 @@ import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 
 import AppContextProvider from '@/store/AppContextProvider';
 
-export const DEFAULT_TITLE = 'Empathy';
+const DEFAULT_TITLE = 'Empathy';
 
 function MyApp({
     children,

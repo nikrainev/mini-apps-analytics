@@ -1,4 +1,4 @@
-import { IUploadPersonFileReq, IUploadPersonFileRes } from '@/api/rag/contracts';
+import { IUploadPersonFileRes } from '@/api/rag/contracts';
 import { RAG_PERSON_FILE_ITEM_API } from '@/api/rag/path';
 import { RequestMethods } from '@/shared/const/http';
 import { useRequest } from '@/shared/hooks/useRequest';
