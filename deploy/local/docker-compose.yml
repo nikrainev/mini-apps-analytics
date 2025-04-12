@@ -16,7 +16,7 @@ services:
     image: qdrant/qdrant
     restart: always
     environment:
-      - QDRANT__SERVICE__API_KEY=your_secret_api_key_here
+      - QDRANT__SERVICE__API_KEY=dfsgwg%23435dvffdgb
     volumes:
       - /Users/nikitakrainev/Desktop/HSEDiplom/qdrant_storage:/qdrant/storage
     ports:

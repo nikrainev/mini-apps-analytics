@@ -28,6 +28,7 @@ export const vars = Object.freeze({
     tgToken: '7300312946:AAFFhFnNELkqqZO_ND4MvuxdMTzpZv15nDw',
     qdrant: {
         url: parseString(process.env.QDRANT_URL, ''),
+        apiKey: parseString(process.env.QDRANT_API_KEY, ''),
     },
     yandex: {
         apiToken: parseString(process.env.YANDEX_API_TOKEN, ''),

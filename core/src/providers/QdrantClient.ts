@@ -11,6 +11,9 @@ const {
 export class QdrantProvider {
     public client: QdrantClient;
     constructor() {
-        this.client = new QdrantClient({ url: qdrant.url });
+        this.client = new QdrantClient({
+            url: qdrant.url,
+            apiKey: qdrant.apiKey,
+        });
     }
 }
