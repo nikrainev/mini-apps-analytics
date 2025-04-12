@@ -32,10 +32,10 @@ export class PersonService {
     async getPerson({ personId }:GetPersonParams):Promise<GetPersonRes> {
         const person = await this.personModel.findOne({
             _id: personId,
-        }).exec();
+        });
 
         return {
-            person: person?.toObject() as PersonDocument,
+            person: new PersonPublic(person as PersonDocument),
         };
     }
 

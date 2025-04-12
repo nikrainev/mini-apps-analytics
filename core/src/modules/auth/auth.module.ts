@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'schemas/user.scheme';
+import { QdrantProvider } from 'providers/QdrantClient';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { User, UserSchema } from 'schemas/user.scheme';
     controllers: [AuthController],
     providers: [
         AuthService,
+        QdrantProvider,
     ],
     exports: [],
 })

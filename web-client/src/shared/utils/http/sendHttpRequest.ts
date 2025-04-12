@@ -20,6 +20,7 @@ export interface IReqOptions {
 export async function sendHttpRequest(options: IReqOptions) {
     const { method = 'get', url, data, formData, params, headers, onUploadProgress, cancelToken } = options ?? {};
 
+    console.log(formData);
     try {
         const response = formData
             ? await axios[method](url, formData, {

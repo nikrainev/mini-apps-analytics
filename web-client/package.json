@@ -11,7 +11,7 @@
   "dependencies": {
     "@chakra-ui/form-control": "^2.2.0",
     "@chakra-ui/next-js": "2.4.2",
-    "@chakra-ui/react": "3.10.0",
+    "@chakra-ui/react": "3.15.0",
     "axios": "1.7.9",
     "cnbuilder": "3.1.0",
     "cookies-next": "5.1.0",

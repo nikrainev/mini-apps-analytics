@@ -25,5 +25,12 @@ export const vars = Object.freeze({
         username: parseString(process.env.REDIS_USERNAME, ''),
         password: parseString(process.env.REDIS_PASSWORD, ''),
     },
-    tgToken: '7300312946:AAFFhFnNELkqqZO_ND4MvuxdMTzpZv15nDw'
+    tgToken: '7300312946:AAFFhFnNELkqqZO_ND4MvuxdMTzpZv15nDw',
+    qdrant: {
+        url: parseString(process.env.QDRANT_URL, ''),
+    },
+    yandex: {
+        apiToken: parseString(process.env.YANDEX_API_TOKEN, ''),
+        mlFolderId:  parseString(process.env.YANDEX_ML_FOLDER_ID, ''),
+    },
 });

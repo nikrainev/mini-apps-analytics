@@ -44,7 +44,7 @@ export class PersonsController {
 
     @Roles(UserRoles.Customer)
     @UseGuards(JwtAuthGuard)
-    @Get('person/{personId}')
+    @Get('person/:personId')
     async getPerson(
         @Param() params: GetPersonParams,
     ):Promise<GetPersonRes> {

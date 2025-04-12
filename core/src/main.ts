@@ -5,6 +5,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { HttpAdapterHost } from '@nestjs/core';
 import fastifyCookie from '@fastify/cookie';
+import multipart from '@fastify/multipart';
 
 import { AppModule } from './app.module';
 import { vars } from './config/vars';
@@ -27,6 +28,8 @@ async function bootstrap() {
     await app.register(fastifyCookie, {
         secret: 'my-secret',
     });
+
+    app.register(multipart);
 
     await app.listen(vars.port, '0.0.0.0');
 }

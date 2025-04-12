@@ -10,6 +10,9 @@ import { JwtService } from '@nestjs/jwt';
 import { vars } from '../../config/vars';
 import { UserRoles } from '../../common/const/user/USER_ROLES';
 import { UserNotFoundError } from '../../common/errors/Auth.errors';
+import { USER_KNOWLEDGE_COLLECTION } from 'common/const/VECTOR_COLLECTIONS_NAMES';
+import { forwardRef, Inject } from '@nestjs/common';
+import { QdrantProvider } from '../../providers/QdrantClient';
 
 const HASH_ROUNDS = 10;
 
@@ -17,7 +20,9 @@ export class AuthService {
     constructor(
         @InjectModel(User.name)
         private userModel: Model<UserDocument>,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        @Inject(forwardRef(() => QdrantProvider))
+        private readonly qdrantProvider: QdrantProvider,
     ) {}
 
     async createUser({
@@ -42,6 +47,22 @@ export class AuthService {
         }, {
             secret: vars.jwtSalt,
             expiresIn: '7d',
+        });
+
+        await this.qdrantProvider.client.createCollection(USER_KNOWLEDGE_COLLECTION({
+            userId: newUser.id,
+        }), {
+            vectors: {
+                size: 256,
+                distance: 'Cosine',
+            },
+            sparse_vectors: {
+                'sparse-vector-name': {
+                    index: {
+                        on_disk: false,
+                    },
+                },
+            },
         });
         
         return {

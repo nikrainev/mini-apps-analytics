@@ -8,6 +8,24 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: my_password
     volumes:
-      - /etc/mongodbdata-apps:/data/db
+      - /Users/nikitakrainev/Desktop/HSEDiplom/mongodbdata-apps:/data/db
     ports:
       - "27027:27017"
+
+  qdrant:
+    image: qdrant/qdrant
+    restart: always
+    environment:
+      - QDRANT__SERVICE__API_KEY=your_secret_api_key_here
+    volumes:
+      - /Users/nikitakrainev/Desktop/HSEDiplom/qdrant_storage:/qdrant/storage
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+
+  context-redis:
+    image: redis:7.2.4-alpine
+    restart: always
+    command: redis-server
+    ports:
+      - "26481:6379"

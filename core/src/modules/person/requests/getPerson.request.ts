@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PersonDocument } from 'schemas/person.scheme';
+import { PersonPublic } from 'schemas/person.scheme';
 
 export class GetPersonParams {
     @IsString()
@@ -9,5 +9,5 @@ export class GetPersonParams {
 }
 
 export interface GetPersonRes {
-    person: PersonDocument
+    person: PersonPublic
 }

@@ -15,7 +15,9 @@ export const useCreatePerson = () => useRequest<{
 
 export const useGetPerson = (args:{
     personId: string,
-}) => useRequest({
+}) => useRequest<never, {
+    person: IPerson
+}>({
     url: PERSON_ITEM_API({ personId: args.personId }),
     method: RequestMethods.Get,
 });

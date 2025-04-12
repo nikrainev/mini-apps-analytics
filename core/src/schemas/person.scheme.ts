@@ -5,7 +5,7 @@ import {
 } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { DateString } from '../common/types/app.types';
-import {UserDocument} from "./user.scheme";
+import {UserRole} from "../common/const/user/USER_ROLES";
 
 export type PersonDocument = HydratedDocument<Person>;
 
@@ -15,6 +15,11 @@ export interface IPerson {
     title: string;
     desc: string;
     createdAt: DateString;
+}
+
+export interface IPersonKnowledge {
+    createdAt: DateString;
+    title: string;
 }
 
 @Schema({
@@ -43,6 +48,12 @@ export class Person {
         required: true,
     })
     ownerUserId: string;
+
+    @Prop([{
+        type: String,
+        required: true,
+    }])
+    roles: UserRole[];
 
     @Prop({
         type: Date,

@@ -1,3 +1,5 @@
+import { FC } from 'react';
+
 import { Avatar, HStack, defineStyle, Text } from '@chakra-ui/react';
 
 const ringCss = defineStyle({
@@ -7,10 +9,18 @@ const ringCss = defineStyle({
     outlineStyle: 'solid',
 });
 
+import { IPerson } from '@/shared/types/person.types';
+
 import styles from './ProfileBlock.module.scss';
 
+interface IProps {
+    person: IPerson,
+}
 
-const ProfileBlock = () => {
+
+const ProfileBlock:FC<IProps> = ({
+    person,
+}) => {
     return (
         <div className={styles.cont}>
             <Avatar.Root
@@ -22,9 +32,11 @@ const ProfileBlock = () => {
                 <Avatar.Image src="https://randomuser.me/api/portraits/men/42.jpg" />
             </Avatar.Root>
             <div className={styles.textCol}>
-                <Text textStyle="2xl">Chakra Name</Text>
+                <Text textStyle="2xl">
+                    {person.title}
+                </Text>
                 <Text>
-                    Описание
+                    {person.desc}
                 </Text>
             </div>
         </div>

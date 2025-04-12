@@ -13,6 +13,8 @@ import { vars } from './config/vars';
 import { MyLogger } from './config/MyLogger';
 import { User, UserSchema } from './schemas/user.scheme';
 import { PersonModule } from './modules/person/person.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { RagModule } from './modules/rag/rag.module';
 
 const {
     mongo: {
@@ -28,6 +30,8 @@ const {
             secret: vars.jwtSalt,
         }),
         TechModule,
+        RagModule,
+        ChatModule,
         AuthModule,
         PersonModule,
         DiscoveryModule,

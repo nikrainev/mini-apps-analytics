@@ -21,7 +21,7 @@ export type RequestFunc<Req> = (data?: IRequest<Req>, options?: Record<string, a
 
 export interface IRequest<Req> extends ReqBase<Req> {
     data?: Req;
-    formData?: Record<string, unknown>;
+    formData?: FormData,
     id?: string;
     nestedId?:  Record<string, string>;
     params?: Record<string, string | number | undefined>;
@@ -105,7 +105,7 @@ export const useRequest = <Req, Res>({
 
     const send = useCallback(
         async (request: IRequest<ReqBase<Req>> = {}, { ignoreErrors = true }: IRequestOptions = {}) => {
-            const { data, id, params, nestedId } = request;
+            const { data, id, params, nestedId, formData } = request;
 
             if (withAbort && abortController.current) {
                 abortController.current.cancel();
@@ -125,6 +125,7 @@ export const useRequest = <Req, Res>({
                     method,
                     data,
                     params,
+                    formData,
                     cancelToken: abortController.current?.token,
                 };
 
