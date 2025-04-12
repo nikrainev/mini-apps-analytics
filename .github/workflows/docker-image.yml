@@ -11,9 +11,6 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-        - uses: actions/checkout@v3
-        - name: Build the Docker image
-          run: docker-compose --compatibility -f deploy/prod/docker-compose.yml up -d --force-recreate --build
         - env:
             PORT: ${{ vars.PORT }}
             JWT_SALT: ${{ vars.JWT_SALT }}
@@ -27,3 +24,6 @@ jobs:
             YANDEX_API_TOKEN: ${{ vars.YANDEX_API_TOKEN }}
             YANDEX_ML_FOLDER_ID: ${{ vars.YANDEX_ML_FOLDER_ID }}
             LANGSMITH_TRACING: ${{ vars.LANGSMITH_TRACING }}
+        - uses: actions/checkout@v3
+        - name: Build the Docker image
+          run: docker-compose --compatibility -f deploy/prod/docker-compose.yml up -d --force-recreate --build
