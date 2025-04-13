@@ -33,3 +33,10 @@ jobs:
             QDRANT__SERVICE__API_KEY: ${{ vars.QDRANT__SERVICE__API_KEY }}
             MONGO_INITDB_ROOT_USERNAME: ${{ vars.MONGO_INITDB_ROOT_USERNAME }}
             MONGO_INITDB_ROOT_PASSWORD: ${{ vars.MONGO_INITDB_ROOT_PASSWORD }}
+            ME_BOT_TOKEN: ${{ vars.ME_BOT_TOKEN }}
+            NEBIUS_BASE_URL: ${{ vars.NEBIUS_BASE_URL }}
+            NEBIUS_SECRET_KEY: ${{ vars.NEBIUS_SECRET_KEY }}
+            REDIS_HOST: ${{ vars.REDIS_HOST }}
+            REDIS_PORT: ${{ vars.REDIS_PORT }}
+            REDIS_USERNAME: ${{ vars.REDIS_USERNAME }}
+            REDIS_PASSWORD: ${{ vars.REDIS_PASSWORD }}

@@ -8,7 +8,6 @@ import { JwtAuthGuard } from './middlewares/guards/jwt-auth.guard';
 import { JwtStrategy } from './middlewares/guards/jwt.strategy';
 import { TechModule } from './modules/tech/tech.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { DiscoveryModule } from './modules/discovery/discovery.module';
 import { vars } from './config/vars';
 import { MyLogger } from './config/MyLogger';
 import { User, UserSchema } from './schemas/user.scheme';
@@ -34,7 +33,6 @@ const {
         ChatModule,
         AuthModule,
         PersonModule,
-        DiscoveryModule,
         MongooseModule.forRoot(connectionString),
         ScheduleModule.forRoot(),
         MongooseModule.forFeature(

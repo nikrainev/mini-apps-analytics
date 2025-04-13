@@ -1,26 +1,26 @@
 import {
-    START,
-    END,
-    MessagesAnnotation,
-    StateGraph,
-    MemorySaver,
-    CompiledStateGraph,
+    CompiledStateGraph, END, MessagesAnnotation, START, StateGraph,
 } from '@langchain/langgraph';
 import { v4 as uuidv4 } from 'uuid';
 
-import { CustomLLM } from 'providers/CustomLLM';
+import { LLMEngine } from './LLMEngine';
 
 export class ChatEngine {
-    private llm:CustomLLM;
+    private llm:LLMEngine;
     private app:CompiledStateGraph<any, any, any, any, any, any>;
     private config = { configurable: { thread_id: uuidv4() } };
 
-    constructor(llm:CustomLLM) {
+    constructor({
+        llm,
+    }:{
+        llm: LLMEngine
+    }) {
         this.llm = llm;
 
-        const callModel  = async (state: typeof MessagesAnnotation.State) =>{
-            const response = await this.llm.invoke(state.messages);
-            return { messages: response };
+        const callModel  = async (state: typeof MessagesAnnotation.State):Promise<{ messages:string }> =>{
+            return await this.llm.invoke({
+                messages: state.messages,
+            });
         };
 
         const workflow = new StateGraph(MessagesAnnotation)
@@ -28,8 +28,10 @@ export class ChatEngine {
             .addEdge(START, 'model')
             .addEdge('model', END);
 
-        const memory = new MemorySaver();
-        this.app = workflow.compile({ checkpointer: memory });
+        this.app = workflow.compile({
+            checkpointer: false,
+            interruptAfter: '*',
+        });
     }
 
     async invoke(input:{

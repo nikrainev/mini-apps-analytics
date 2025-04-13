@@ -8,7 +8,7 @@ import TelegramBot = require('node-telegram-bot-api')
 export class TelegramAPI {
     public client: TelegramBot;
     constructor() {
-        this.client = new TelegramBot(vars.tgToken, {
+        this.client = new TelegramBot(vars.telegram.meBotToken, {
             polling: false,
         });
     }

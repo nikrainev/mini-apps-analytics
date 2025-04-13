@@ -25,7 +25,6 @@ export const vars = Object.freeze({
         username: parseString(process.env.REDIS_USERNAME, ''),
         password: parseString(process.env.REDIS_PASSWORD, ''),
     },
-    tgToken: '7300312946:AAFFhFnNELkqqZO_ND4MvuxdMTzpZv15nDw',
     qdrant: {
         url: parseString(process.env.QDRANT_URL, ''),
         apiKey: parseString(process.env.QDRANT_API_KEY, ''),
@@ -33,5 +32,12 @@ export const vars = Object.freeze({
     yandex: {
         apiToken: parseString(process.env.YANDEX_API_TOKEN, ''),
         mlFolderId:  parseString(process.env.YANDEX_ML_FOLDER_ID, ''),
+    },
+    nebius: {
+        secretKey: parseString(process.env.NEBIUS_SECRET_KEY, ''),
+        baseUrl: parseString(process.env.NEBIUS_BASE_URL, ''),
+    },
+    telegram: {
+        meBotToken: parseString(process.env.ME_BOT_TOKEN, ''),
     },
 });

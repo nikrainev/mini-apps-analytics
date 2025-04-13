@@ -27,5 +27,9 @@ services:
     image: redis:7.2.4-alpine
     restart: always
     command: redis-server
+    volumes:
+      - /Users/nikitakrainev/Desktop/HSEDiplom/redis:/data
+    environment:
+      - REDIS_PASSWORD=dfhej%763fhHH
     ports:
-      - "26481:6379"
+      - "6579:6379"

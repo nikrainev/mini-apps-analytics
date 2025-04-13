@@ -24,14 +24,7 @@ export class TechController {
     ) {}
 
     @Get('/')
-    async loadInfo(
-        @Query('query') query:string,
-    ):Promise<ILoadInfoResponse> {
-        return this.techService.loadInfo(query);
-    }
-
-    @Get('/bot-info')
-    async loadBotInfo():Promise<any> {
-        return this.techService.getBotInfo();
+    async loadInfo():Promise<ILoadInfoResponse> {
+        return this.techService.loadInfo();
     }
 }

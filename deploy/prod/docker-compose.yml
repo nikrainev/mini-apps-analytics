@@ -16,6 +16,8 @@ services:
     image: redis:7.2.4-alpine
     restart: always
     command: redis-server
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
       - /home/redis_storage:/data
     ports:
@@ -52,6 +54,13 @@ services:
       - YANDEX_API_TOKEN=${YANDEX_API_TOKEN}
       - YANDEX_ML_FOLDER_ID=${YANDEX_ML_FOLDER_ID}
       - LANGSMITH_TRACING=${LANGSMITH_TRACING}
+      - ME_BOT_TOKEN=${ME_BOT_TOKEN}
+      - NEBIUS_BASE_URL=${NEBIUS_BASE_URL}
+      - NEBIUS_SECRET_KEY=${NEBIUS_SECRET_KEY}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     depends_on:
       - mongo
       - qdrant
