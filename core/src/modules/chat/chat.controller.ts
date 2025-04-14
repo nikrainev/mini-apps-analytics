@@ -52,5 +52,7 @@ export class ChatController {
             this.logger.log(`Received Text message from bot: ${message}`);
             this.chatService.onBotMessageReceived(message);
         });
+
+        return true;
     }
 }
