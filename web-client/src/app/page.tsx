@@ -9,7 +9,7 @@ const HomePageWR: NextPage = () => {
     return (
         <MainLayout>
             <div>
-                MainPage
+
             </div>
         </MainLayout>
     );

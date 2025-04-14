@@ -40,3 +40,4 @@ jobs:
             REDIS_PORT: ${{ vars.REDIS_PORT }}
             REDIS_USERNAME: ${{ vars.REDIS_USERNAME }}
             REDIS_PASSWORD: ${{ vars.REDIS_PASSWORD }}
+            TG_BOT_WEBHOOK: ${{ vars.TG_BOT_WEBHOOK }}

@@ -39,5 +39,6 @@ export const vars = Object.freeze({
     },
     telegram: {
         meBotToken: parseString(process.env.ME_BOT_TOKEN, ''),
+        botWebHookUrl: parseString(process.env.TG_BOT_WEBHOOK, ''),
     },
 });
