@@ -36,7 +36,7 @@ export class ChatController {
         return this.chatService.sendMessage(body);
     }
 
-    @Post(`tg-bot/${vars.telegram.botWebHookUrl}`)
+    @Post(`tg-bot/${vars.telegram.meBotToken}`)
     async tgBotEndpoint(
         @Req() req:IRequest,
         @Body() body:Record<string, any>,
