@@ -10,6 +10,7 @@ import { FineTunedModels } from './utils/LLMEngine';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import TelegramBot = require('node-telegram-bot-api')
 import { TelegramAPI } from '../../providers/Telegram';
+import { MyLogger } from '../../config/MyLogger';
 
 @Injectable()
 export class ChatService {
@@ -18,6 +19,8 @@ export class ChatService {
         private readonly redisClient: RedisClient,
         @Inject(forwardRef(() => TelegramAPI))
         private readonly telegram: TelegramAPI,
+        @Inject(forwardRef(() => MyLogger))
+        private readonly logger: MyLogger,
     ){}
     
     llm:BaseChatModel;
@@ -50,6 +53,8 @@ export class ChatService {
         if (!message.from?.id || !message.text) {
             return;
         }
+
+        this.logger.log('Received text message from bot:', message);
 
         this.llm = new ChatOpenAI({
             configuration: {

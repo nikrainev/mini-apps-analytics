@@ -47,19 +47,11 @@ export class ChatController {
         @Body() body:TelegramBot.Update,
     ):Promise<any> {
         this.telegram.client.processUpdate(body);
-        this.logger.log('Received any message from bot:', body);
+        this.logger.log('Received any message from bot:');
 
-        const onTextMessage = async (message:TelegramBot.Message) => {
-            this.logger.log('Received Text message from bot', message);
-            await this.chatService.onBotMessageReceived(message);
-
-            return true;
-        };
-
-        this.telegram.client.on('text', onTextMessage);
-
-        //this.telegram.client.addListener('text', onTextMessage);
-        //this.telegram.client.removeListener('text', onTextMessage);
+        if (body.message && body.message?.text && (body.message?.text !== '/start')) {
+            await this.chatService.onBotMessageReceived(body.message);
+        }
 
         return true;
     }
