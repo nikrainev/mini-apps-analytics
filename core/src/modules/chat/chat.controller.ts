@@ -48,10 +48,16 @@ export class ChatController {
     ):Promise<any> {
         this.telegram.client.processUpdate(body);
         this.logger.log('Received any message from bot:', body);
-        this.telegram.client.addListener('text', (message:TelegramBot.Message) => {
-            this.logger.log(`Received Text message from bot: ${message}`);
-            this.chatService.onBotMessageReceived(message);
-        });
+
+        const onTextMessage = async (message:TelegramBot.Message) => {
+            this.logger.log('Received Text message from bot', message);
+            await this.chatService.onBotMessageReceived(message);
+
+            return true;
+        };
+
+        this.telegram.client.addListener('text', onTextMessage);
+        this.telegram.client.removeListener('text', onTextMessage);
 
         return true;
     }
