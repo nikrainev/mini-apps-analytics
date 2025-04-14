@@ -5,6 +5,8 @@ import { vars } from '../config/vars';
 import TelegramBot = require('node-telegram-bot-api')
 import { MyLogger } from 'config/MyLogger';
 
+import { } from 'node-telegram-bot-api';
+
 const {
     meBotToken,
     botWebHookUrl,

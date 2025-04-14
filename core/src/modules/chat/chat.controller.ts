@@ -13,8 +13,11 @@ import { ChatService } from './chat.service';
 import { TransformInterceptor } from 'middlewares/response.interceptor';
 import { IRequest } from 'common/types/fastify.types';
 import { SendMessageBody } from './requests/sendMessage.request';
-import { vars } from '../../config/vars';
-import { MyLogger } from '../../config/MyLogger';
+import { vars } from 'config/vars';
+import { MyLogger } from 'config/MyLogger';
+import { TelegramAPI } from 'providers/Telegram';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import TelegramBot = require('node-telegram-bot-api')
 
 @Controller('chat')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -25,6 +28,8 @@ export class ChatController {
         private readonly chatService: ChatService,
         @Inject(forwardRef(() => MyLogger))
         private readonly logger: MyLogger,
+        @Inject(forwardRef(() => TelegramAPI))
+        private readonly telegram: TelegramAPI,
     ) {}
 
 
@@ -39,8 +44,13 @@ export class ChatController {
     @Post(`tg-bot/${vars.telegram.meBotToken}`)
     async tgBotEndpoint(
         @Req() req:IRequest,
-        @Body() body:Record<string, any>,
+        @Body() body:TelegramBot.Update,
     ):Promise<any> {
-        this.logger.log('Telegram bot webhook received', body);
+        this.telegram.client.processUpdate(body);
+
+        this.telegram.client.addListener('text', (message:TelegramBot.Message) => {
+            this.logger.log(`Received message from bot: ${message}`);
+            this.chatService.onBotMessageReceived(message);
+        });
     }
 }
