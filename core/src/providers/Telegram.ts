@@ -25,7 +25,7 @@ export class TelegramAPI {
 
         if (botWebHookUrl) {
             const hookUrl = `${botWebHookUrl}/${meBotToken}`;
-            this.client.setWebHook(hookUrl);
+            //this.client.setWebHook(hookUrl);
 
             this.logger.log(`Tg Webhook set to ${hookUrl}`);
         }
