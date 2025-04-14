@@ -56,8 +56,10 @@ export class ChatController {
             return true;
         };
 
-        this.telegram.client.addListener('text', onTextMessage);
-        this.telegram.client.removeListener('text', onTextMessage);
+        this.telegram.client.on('text', onTextMessage);
+
+        //this.telegram.client.addListener('text', onTextMessage);
+        //this.telegram.client.removeListener('text', onTextMessage);
 
         return true;
     }

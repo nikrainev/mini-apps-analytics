@@ -1,6 +1,6 @@
 import { ChatEngine } from './utils/ChatEngine';
 import { SendMessageBody } from './requests/sendMessage.request';
-import {forwardRef, Inject, Injectable} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { RedisClient } from 'providers/RedisClient';
 import { ChatOpenAI } from '@langchain/openai';
 import { BaseChatModel } from '@langchain/core/dist/language_models/chat_models';
@@ -9,7 +9,7 @@ import { LangChainChatEngine } from './utils/LangChainChatEngine';
 import { FineTunedModels } from './utils/LLMEngine';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import TelegramBot = require('node-telegram-bot-api')
-import {TelegramAPI} from "../../providers/Telegram";
+import { TelegramAPI } from '../../providers/Telegram';
 
 @Injectable()
 export class ChatService {
