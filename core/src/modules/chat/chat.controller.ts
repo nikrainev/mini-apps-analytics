@@ -41,15 +41,15 @@ export class ChatController {
         return this.chatService.sendMessage(body);
     }
 
-    @Post(`tg-bot/${vars.telegram.meBotToken}`)
+    @Post(`tg-bot2/${vars.telegram.meBotToken}`)
     async tgBotEndpoint(
         @Req() req:IRequest,
         @Body() body:TelegramBot.Update,
     ):Promise<any> {
         this.telegram.client.processUpdate(body);
-
+        this.logger.log('Received any message from bot:', body);
         this.telegram.client.addListener('text', (message:TelegramBot.Message) => {
-            this.logger.log(`Received message from bot: ${message}`);
+            this.logger.log(`Received Text message from bot: ${message}`);
             this.chatService.onBotMessageReceived(message);
         });
     }

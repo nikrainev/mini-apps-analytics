@@ -12,6 +12,8 @@ const {
     botWebHookUrl,
 } = vars.telegram;
 
+let setCount = 0;
+
 @Injectable()
 export class TelegramAPI {
     public client: TelegramBot;
@@ -23,9 +25,10 @@ export class TelegramAPI {
             polling: false,
         });
 
-        if (botWebHookUrl) {
+        if (botWebHookUrl && setCount === 0) {
             const hookUrl = `${botWebHookUrl}/${meBotToken}`;
-            //this.client.setWebHook(hookUrl);
+            setCount++;
+            this.client.setWebHook(hookUrl);
 
             this.logger.log(`Tg Webhook set to ${hookUrl}`);
         }
