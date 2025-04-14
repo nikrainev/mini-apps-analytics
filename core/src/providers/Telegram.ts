@@ -22,9 +22,10 @@ export class TelegramAPI {
         });
 
         if (botWebHookUrl) {
-            this.client.setWebHook(`${botWebHookUrl}/${botWebHookUrl}`);
+            const hookUrl = `${botWebHookUrl}/${botWebHookUrl}`;
+            this.client.setWebHook(hookUrl);
 
-            this.logger.log(`Tg Webhook set to ${botWebHookUrl}`);
+            this.logger.log(`Tg Webhook set to ${hookUrl}`);
         }
     }
 }
