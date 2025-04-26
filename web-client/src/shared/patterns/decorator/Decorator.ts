@@ -76,6 +76,4 @@ export const testDecorator = () => {
     let weekEndRoute = new RoadBikeRoute();
     weekEndRoute = new BikerLevel(2, weekEndRoute);
     weekEndRoute = new LengthKM(100, weekEndRoute);
-
-    console.log(weekEndRoute.getHoursDuration(), weekEndRoute.getDesc())
-}
+};

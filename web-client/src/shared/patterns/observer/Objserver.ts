@@ -8,35 +8,15 @@ export class Observer implements IObserver {
 
     public emitMessage() {
         this.subscriptions.forEach((_, key) => {
-            key('data')
-        })
+            key('data');
+        });
     }
 
     public subscribe (cb:(data:any) => void) {
-        this.subscriptions.set(cb, undefined)
+        this.subscriptions.set(cb, undefined);
     };
 
     public unSubscribe (cb:(data:any) => void) {
-        this.subscriptions.delete(cb)
+        this.subscriptions.delete(cb);
     }
-}
-
-
-const testObserver = () => {
-    const observer = new Observer();
-
-    const cb1 = (data:any) => {
-        console.log(data, 'cb1');
-    };
-
-    const cb2 = (data:any) => {
-        console.log(data, 'cb2');
-    }
-
-    observer.subscribe(cb1);
-    observer.subscribe(cb2);
-    observer.emitMessage();
-
-    observer.unSubscribe(cb1);
-    observer.emitMessage()
 }

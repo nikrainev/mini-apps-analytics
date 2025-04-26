@@ -32,6 +32,10 @@ const MainPage = () => {
             });
         }
     }, [getPersonsState]);
+
+    console.log(personsStore);
+
+    console.log(getPersonsState);
     
     return (
         <Box

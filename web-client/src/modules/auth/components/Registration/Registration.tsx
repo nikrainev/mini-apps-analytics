@@ -45,7 +45,6 @@ const Registration:FC = () => {
     } = useSignUp();
 
     const onSubmit = async (values:IFormData) => {
-        console.log(values);
         onRequest({
             data: values,
         });

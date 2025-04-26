@@ -2,7 +2,6 @@ type LambdaFuncType = (word:string, arg?:LambdaFuncType) => LambdaFuncType
 
 const lambda = (word:string, arg?:LambdaFuncType):LambdaFuncType|undefined => {
     let resultSentance = word;
-    console.log(arg);
     return arg;
 };
 
@@ -70,9 +69,5 @@ export const test = () => {
     const MARY = new E('mary');
     const JOHN = new E('john');
 
-    console.log(MARY.getType());
-
     const loveJohn = new Lambda(new Lambda(new E('love'), JOHN), MARY);
-
-    console.log(loveJohn.getSentence());
 };

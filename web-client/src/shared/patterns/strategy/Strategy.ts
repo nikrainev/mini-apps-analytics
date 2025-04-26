@@ -51,7 +51,7 @@ class Bicycle {
     }
 
     public bell():string {
-        return 'Ring Ring'
+        return 'Ring Ring';
     }
 }
 
@@ -70,8 +70,4 @@ class Tsunami extends Bicycle {
 export const testStrategy = () => {
     const myTcr = new GiantTCR();
     const myTsunami = new Tsunami();
-
-    console.log(myTcr.bell())
-    console.log(myTsunami.performIncrease(2));
-    console.log(myTcr.performIncrease(2));
-}
+};

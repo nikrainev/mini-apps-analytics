@@ -53,7 +53,6 @@ const KnowledgeUploader:FC<IProps> = ({
     } = useForm<IFormData>();
 
     const onSubmit = (values:IFormData) => {
-        console.log(values)
         const formData = new FormData();
 
         formData.append('file', values[FieldsNames.File].item(0) as File);
