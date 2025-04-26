@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/charts": "3.16.0",
     "@chakra-ui/form-control": "^2.2.0",
     "@chakra-ui/next-js": "2.4.2",
     "@chakra-ui/react": "3.15.0",
     "axios": "1.7.9",
     "cnbuilder": "3.1.0",
     "cookies-next": "5.1.0",
+    "date-fns": "4.1.0",
     "dotenv": "16.4.7",
     "i18next": "24.2.2",
     "i18next-resources-to-backend": "1.2.1",
@@ -24,9 +26,10 @@
     "next-i18next": "15.4.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-hook-form": "^7.54.2",
+    "react-hook-form": "7.54.2",
     "react-i18next": "15.4.1",
-    "react-icons": "^5.5.0",
+    "react-icons": "5.5.0",
+    "recharts": "2.15.3",
     "sass": "1.85.1"
   },
   "devDependencies": {

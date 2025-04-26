@@ -24,18 +24,32 @@ export class RagService {
             file: body.file,
         });
 
-        const embeddings = await this.yandexML.embeddings.embedDocuments(fileText.slice(40, 50));
+        const getEnbeddingsPromise = fileText.map((f) => this.yandexML.embeddings.embedDocuments([f]));
+
+        const embeddings = await Promise.all(getEnbeddingsPromise);
 
         await this.qdrantProvider.client.upsert(USER_KNOWLEDGE_COLLECTION({
             userId: meUserId,
         }), {
-            points: embeddings.map((e ,index) => ({
+            points: embeddings.map((e) => e[0]).map((e ,index) => ({
                 id: uuidv4(),
                 payload: {
                     text: fileText[index],
                 },
                 vector: e,
             })),
+        });
+
+        await this.personModel.updateOne({
+            _id: personId,
+        }, {
+            $push: {
+                knowledge: {
+                    title: body.title,
+                    fileName: body.file.originalName,
+                    createdAt: new Date(),
+                },
+            },
         });
 
         return {

@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { commonErrorsCodes } from '../common/errorsCodes/common.errorCodes';
+import {vars} from "../config/vars";
+import {AppEnv} from "../common/const/AppEnv";
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
@@ -26,6 +28,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
             message: [rr],
             statusCode: 502,
             error: commonErrorsCodes.unhandledError.code,
+            data: vars.appEnv == AppEnv.Local ? exception : null,
         });
     }
 }

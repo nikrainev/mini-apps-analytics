@@ -4,16 +4,20 @@ import {
     Text,
 } from '@chakra-ui/react';
 
+import { IPersonKnowledge } from '@/shared/types/person.types';
+
 import { KnowledgeItem } from './KnowledgeItem';
 import styles from './KnowledgeList.module.scss';
 import { KnowledgeUploader } from './KnowledgeUploader';
 
 interface IProps {
     personId: string,
+    knowledge: IPersonKnowledge[]
 }
 
 const KnowledgeBlock:FC<IProps> = ({
     personId,
+    knowledge,
 }) => {
     return (
         <div className={styles.cont}>
@@ -25,9 +29,14 @@ const KnowledgeBlock:FC<IProps> = ({
                     personId={personId}
                 />
             </div>
-            <KnowledgeItem />
-            <KnowledgeItem />
-            <KnowledgeItem />
+            <div className={styles.list}>
+                {knowledge.map((k) => (
+                    <KnowledgeItem
+                        key={k.id}
+                        knowledge={k}
+                    />
+                ))}
+            </div>
         </div>
     );
 };

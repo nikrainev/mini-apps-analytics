@@ -79,7 +79,7 @@ const KnowledgeUploader:FC<IProps> = ({
                     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
                         <Dialog.Content>
                             <Dialog.Header>
-                                <Dialog.Title>Add Person</Dialog.Title>
+                                <Dialog.Title>Add Knowledge data</Dialog.Title>
                             </Dialog.Header>
                             <Dialog.Body>
                                 <FormControl>
