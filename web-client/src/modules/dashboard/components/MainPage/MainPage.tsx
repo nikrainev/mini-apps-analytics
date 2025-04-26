@@ -33,7 +33,7 @@ const MainPage = () => {
         }
     }, [getPersonsState]);
 
-    console.log(personsStore);
+    console.log(personsStore.isLoading);
 
     console.log(getPersonsState);
     
