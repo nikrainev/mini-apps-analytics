@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { Box, Loader, } from '@chakra-ui/react';
+import { observer } from 'mobx-react';
 
 import { useGetPersons } from '@/api/persons/personsRequests';
 import { usePersonsList } from '@/modules/dashboard/store/MainPageContext';
@@ -55,4 +56,4 @@ const MainPage = () => {
     );
 };
 
-export default MainPage;
+export default observer(MainPage);
