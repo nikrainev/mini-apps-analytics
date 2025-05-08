@@ -14,6 +14,7 @@ import { User, UserSchema } from './schemas/user.scheme';
 import { PersonModule } from './modules/person/person.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { RagModule } from './modules/rag/rag.module';
+import { DialogsDataModule } from './modules/dialogsData/dialogsData.module';
 
 const {
     mongo: {
@@ -33,6 +34,7 @@ const {
         ChatModule,
         AuthModule,
         PersonModule,
+        DialogsDataModule,
         MongooseModule.forRoot(connectionString),
         ScheduleModule.forRoot(),
         MongooseModule.forFeature(

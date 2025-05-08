@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { FC } from 'react';
 
 import {
-    Box, Button, Text,
+    Text,
 } from '@chakra-ui/react';
-import { RiAddFill } from 'react-icons/ri';
 
 import { ChatItem } from './ChatItem';
 import styles from './ChatsList.module.scss';
+import { ChatUploader } from './ChatUploader';
 
+interface IProps {
+    personId: string,
+}
 
-const ChatsList = () => {
+const ChatsList:FC<IProps> = ({
+    personId,
+}) => {
     return (
         <div className={styles.cont}>
             <div className={styles.header}>
                 <Text textStyle="2xl">
                     Chats
                 </Text>
-                <Button>
-                    Upload Chat <RiAddFill />
-                </Button>
+                <ChatUploader
+                    personId={personId}
+                />
             </div>
             <div className={styles.chatsList}>
                 <ChatItem

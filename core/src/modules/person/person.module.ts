@@ -6,6 +6,7 @@ import { PersonService } from './person.service';
 import { PersonsController } from './person.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Person, PersonSchema } from 'schemas/person.scheme';
+import { QdrantProvider } from 'providers/QdrantClient';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { Person, PersonSchema } from 'schemas/person.scheme';
     controllers: [PersonsController],
     providers: [
         PersonService,
+        QdrantProvider,
     ],
     exports: [],
 })

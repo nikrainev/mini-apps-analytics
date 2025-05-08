@@ -4,11 +4,16 @@ import { CreatePersonBody, CreatePersonRes } from './requests/createPerson.reque
 import { GetPersonsReq, GetPersonsRes } from './requests/getPersons.request';
 import { GetPersonParams, GetPersonRes } from './requests/getPerson.request';
 import { Person, PersonDocument, PersonPublic } from 'schemas/person.scheme';
+import { PERSON_KNOWLEDGE_COLLECTION } from 'common/const/VECTOR_COLLECTIONS_NAMES';
+import { forwardRef, Inject } from '@nestjs/common';
+import { QdrantProvider } from 'providers/QdrantClient';
 
 export class PersonService {
     constructor(
         @InjectModel(Person.name)
         private personModel: Model<PersonDocument>,
+        @Inject(forwardRef(() => QdrantProvider))
+        private readonly qdrantProvider: QdrantProvider,
     ) {}
 
     async createPerson({
@@ -20,6 +25,22 @@ export class PersonService {
             desc,
             ownerUserId: meUserId,
             createdAt: new Date(),
+        });
+
+        await this.qdrantProvider.client.createCollection(PERSON_KNOWLEDGE_COLLECTION({
+            personId: newPerson.id,
+        }), {
+            vectors: {
+                size: 256,
+                distance: 'Cosine',
+            },
+            sparse_vectors: {
+                'sparse-vector-name': {
+                    index: {
+                        on_disk: false,
+                    },
+                },
+            },
         });
 
         await newPerson.save();

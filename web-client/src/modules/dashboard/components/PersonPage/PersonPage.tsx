@@ -44,7 +44,9 @@ const PersonPage = () => {
             <ProfileBlock
                 person={state.result.data.person}
             />
-            <ChatsList />
+            <ChatsList
+                personId={state.result.data.person.id}
+            />
             <KnowledgeList
                 knowledge={state.result.data.person.knowledge}
                 personId={state.result.data.person.id}

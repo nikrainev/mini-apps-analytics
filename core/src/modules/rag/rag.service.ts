@@ -6,7 +6,7 @@ import { forwardRef, Inject } from '@nestjs/common';
 import { QdrantProvider } from 'providers/QdrantClient';
 import { getTextFromFile } from './utils/getTextFromFile';
 import { YandexMLProvider } from 'providers/YandexML';
-import { USER_KNOWLEDGE_COLLECTION } from '../../common/const/VECTOR_COLLECTIONS_NAMES';
+import { PERSON_KNOWLEDGE_COLLECTION } from '../../common/const/VECTOR_COLLECTIONS_NAMES';
 import { v4 as uuidv4 } from 'uuid';
 
 export class RagService {
@@ -28,8 +28,8 @@ export class RagService {
 
         const embeddings = await Promise.all(getEnbeddingsPromise);
 
-        await this.qdrantProvider.client.upsert(USER_KNOWLEDGE_COLLECTION({
-            userId: meUserId,
+        await this.qdrantProvider.client.upsert(PERSON_KNOWLEDGE_COLLECTION({
+            personId: personId,
         }), {
             points: embeddings.map((e) => e[0]).map((e ,index) => ({
                 id: uuidv4(),
