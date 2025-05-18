@@ -30,7 +30,7 @@ jobs:
             LANGSMITH_TRACING: ${{ vars.LANGSMITH_TRACING }}
             NEXT_PUBLIC_APP_ENV: ${{ vars.NEXT_PUBLIC_APP_ENV }}
             NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL }}
-            QDRANT__SERVICE__API_KEY: ${{ vars.QDRANT__SERVICE__API_KEY }}
+            QDRANT_API_KEY: ${{ vars.QDRANT_API_KEY }}
             MONGO_INITDB_ROOT_USERNAME: ${{ vars.MONGO_INITDB_ROOT_USERNAME }}
             MONGO_INITDB_ROOT_PASSWORD: ${{ vars.MONGO_INITDB_ROOT_PASSWORD }}
             ME_BOT_TOKEN: ${{ vars.ME_BOT_TOKEN }}
