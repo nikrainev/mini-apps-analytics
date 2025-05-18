@@ -79,7 +79,7 @@ export class ChatCronService {
 
                         const docText = doc.join('\n');
 
-                        this.logger.log(`indexed ${++indexNumber}, ${docText}`);
+                        this.logger.log(`indexed ${++indexNumber}`);
 
                         const embeddingsResult = await this.yandexML.embeddings.embedQuery(docText);
 

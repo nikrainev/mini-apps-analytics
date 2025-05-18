@@ -66,7 +66,7 @@ export class ChatService {
                 exact: false,
             },
             with_payload: true,
-            limit: 2,
+            limit: 15,
         });
 
         return result.points.map((p) => {
@@ -89,6 +89,31 @@ export class ChatService {
 
         await this.telegram.client.sendMessage(message.chat.id, responseText);
     }
+
+    private getInitiateMessage = async ({ rag, currentChatHistory }:{ rag: string[], currentChatHistory: string }) => {
+        const prompt =  `Перед тобой промпт содержаший историю текущего диалога, два примера с похожими реальными диалогами. Твоя задача придумать инициативное сообщения для LLM которая ведет диалог (в текущем диалоге - Я это ответы LLM). Ответь в формате JSON объекта - { "shouldIntiate": true, "initiateMessage": "" }, shouldInitiate - это поле отвечающие нужно ли LLM инциаровать общение или нет (предлагай инциировать общение когда кажется это уместно в диалоге есть очевидное продлжение или диалог со строны LLM кажется слишком неициативный), initiateMessage - инициативное сообщение от LLM, сообщение будет добавлено в контекcт LLM. 
+Напиши в стиле ответов (твои ответы это, то что после Я:) из следующих диалогов:
+${rag.join('\n')}
+
+### Промпт с историей диалога для которого ты должен придумать новое инициативное сообщние:
+Ты – Никита. Твоя задача – общаться в чате так, как будто это делаешь ты сам(а). Твой стиль общения должен быть максимально близок к тому, как ты обычно общаешься в мессенджерах.
+Помимо только ответов на вопросы задавай и свои вместе с ответом на последнее сообщение, но так чтобы это было уместно.
+Мне 23 года я мужчина. Живу в Санкт-Петербурге, заканчиваю магистратуру. Люблю шутить (часто иронизирую), часто использую эмодзи. Отвечаю кратко, но по делу. Интересуюсь программированием, AI, велосипедами.
+
+### История текущего диалога (последние сообщения):
+${currentChatHistory}
+--- КОНЕЦ ИСТОРИИ ТЕКУЩЕГО ДИАЛОГА ---
+
+### Похожие фрагменты из твоих прошлых диалогов (используй их как вдохновение для стиля и содержания, можешь брать отсюда идея для инциативного общения в диалоге, но НЕ КОПИРУЙ дословно):
+
+Пример 1:
+${rag[0]}
+--- КОНЕЦ ПРИМЕРА 1 ---
+
+Пример 2:
+${rag[1]}
+--- КОНЕЦ ПРИМЕРА 2 ---`;
+    };
 
     private async getPrompt({ 
         rag1,
@@ -193,9 +218,9 @@ export class ChatService {
                 baseURL: vars.nebius.baseUrl,
                 apiKey: vars.nebius.secretKey,
             },
-            model: FineTunedModels.BashirLlama70b,
+            model: FineTunedModels.Llama70bAllMy,
             temperature: 0.8,
-            topP: 0.6,
+            topP: 0.9,
         });
 
         const chain = new LangChainChatEngine({
@@ -210,8 +235,7 @@ export class ChatService {
         retryLimit,
         currentRetry,
         chatId,
-        rag2,
-        rag1,
+        rag,
         isCorrectionNeeded,
         humanMessage,
         previousGeneratedResponse,
@@ -222,8 +246,7 @@ export class ChatService {
         retryLimit: number,
         currentRetry: number,
         chatId: string,
-        rag1: string,
-        rag2: string,
+        rag: string[],
         lastDialogHistoryInText: string,
         humanMessage: string,
         currentChatHistory: string,
@@ -233,15 +256,13 @@ export class ChatService {
     }):Promise<string> {
         try {
             const prompt = await this.getPrompt({
-                rag1,
-                rag2,
+                rag1: rag[0],
+                rag2: rag[1],
                 isCorrectionNeeded: isCorrectionNeeded || false,
                 previousGeneratedResponse,
                 verifierLlmFeedback,
                 currentChatHistory,
             });
-
-            console.log(prompt);
 
             const llmAnswer = await this.tryGetAnswerFromLLM({
                 chatId,
@@ -249,8 +270,15 @@ export class ChatService {
                 humanMessage,
             });
 
+            this.logger.log('get llm call');
+
             const resultAnswer = await this.evaluateLLMAnswer({
                 currentDialog: lastDialogHistoryInText + ` \n Я: ${llmAnswer.response}`,
+            });
+
+            await this.getInitiateMessage({
+                rag,
+                currentChatHistory,
             });
 
             if (resultAnswer.shouldRetry && (retryLimit > currentRetry)) {
@@ -259,8 +287,7 @@ export class ChatService {
                     retryLimit,
                     currentRetry: currentRetry + 1,
                     chatId,
-                    rag2,
-                    rag1,
+                    rag,
                     isCorrectionNeeded: true,
                     previousGeneratedResponse: llmAnswer.response,
                     verifierLlmFeedback: resultAnswer.retryDesc,
@@ -270,7 +297,6 @@ export class ChatService {
                 });
             }
 
-            console.log('try save');
             await llmAnswer.onSaveContext();
 
             return llmAnswer.response;
@@ -281,8 +307,7 @@ export class ChatService {
                     retryLimit,
                     currentRetry: currentRetry + 1,
                     chatId,
-                    rag2,
-                    rag1,
+                    rag,
                     isCorrectionNeeded,
                     previousGeneratedResponse,
                     verifierLlmFeedback,
@@ -302,23 +327,27 @@ export class ChatService {
             isSelected: true,
         });
 
+        this.logger.log('get dialogStats');
+
         if (!selectedDialogStats) {
             return '';
         }
 
         const dialogHistory = await this.redisClient.client.lrange(chatId, 0, -1);
+        this.logger.log('get redis');
         const parsedDialogHistory = dialogHistory.map((d) => JSON.parse(d));
         let lastDialogHistoryInText = llmContextToVectorData(parsedDialogHistory.slice(0, 30).reverse());
         lastDialogHistoryInText = `${lastDialogHistoryInText}\n Собеседник:${text} \n`;
 
         const similarMessages = await this.getSimilarMessages(lastDialogHistoryInText, selectedDialogStats.personId);
 
+        this.logger.log('get vector');
+
         return this.getAnswerFromLLm({
             retryLimit: 10,
             currentRetry: 1,
             chatId,
-            rag2: similarMessages[1] || '',
-            rag1: similarMessages[0] || '',
+            rag: similarMessages,
             isCorrectionNeeded: false,
             lastDialogHistoryInText,
             humanMessage: text,
