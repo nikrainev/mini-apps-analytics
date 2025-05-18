@@ -13,7 +13,8 @@ const {
 
 export interface IResponseWithActions {
     response: string,
-    onSaveContext: () => Promise<void>
+    onSaveContext: () => Promise<void>,
+    onAppendNewMessage: (ai:string) => Promise<void>
 }
 
 
@@ -45,15 +46,18 @@ export class LangChainChatEngine {
         });
     }
 
+
     async invoke({ prompt, humanMessage }:{ prompt: string, humanMessage: string }):Promise<IResponseWithActions> {
-        console.log('start invokr')
         const llmResult = await this.llm.invoke(prompt);
 
         return {
             response: llmResult.content as string,
             onSaveContext: async () => {
-                console.log('on save content');
                 await this.memory.saveContext({ content: humanMessage }, { content: llmResult.content });
+                return;
+            },
+            onAppendNewMessage: async (ai) => {
+                await this.memory.saveContext({ content: ' ' }, { content: ai });
                 return;
             },
         };

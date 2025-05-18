@@ -20,6 +20,8 @@ import { ChatGenerationPromptInputs, MessengerPrompts } from './utils/MessengerP
 import { getObjFromLLM } from './utils/getObjFromLLM';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import TelegramBot = require('node-telegram-bot-api');
+import OpenAI from 'openai';
+import {probabilityCheck} from "./utils/propablityCheck";
 
 
 @Injectable()
@@ -90,9 +92,12 @@ export class ChatService {
         await this.telegram.client.sendMessage(message.chat.id, responseText);
     }
 
-    private getInitiateMessage = async ({ rag, currentChatHistory }:{ rag: string[], currentChatHistory: string }) => {
-        const prompt =  `Перед тобой промпт содержаший историю текущего диалога, два примера с похожими реальными диалогами. Твоя задача придумать инициативное сообщения для LLM которая ведет диалог (в текущем диалоге - Я это ответы LLM). Ответь в формате JSON объекта - { "shouldIntiate": true, "initiateMessage": "" }, shouldInitiate - это поле отвечающие нужно ли LLM инциаровать общение или нет (предлагай инциировать общение когда кажется это уместно в диалоге есть очевидное продлжение или диалог со строны LLM кажется слишком неициативный), initiateMessage - инициативное сообщение от LLM, сообщение будет добавлено в контекcт LLM. 
-Напиши в стиле ответов (твои ответы это, то что после Я:) из следующих диалогов:
+    private getInitiateMessage = async ({ rag, currentChatHistory }:{ rag: string[], currentChatHistory: string }):Promise<{
+        shouldInitiate: boolean,
+        message: string,
+    }> => {
+        const prompt =  `Перед тобой промпт содержаший историю текущего диалога, два примера с похожими реальными диалогами. Твоя задача придумать инициативное сообщения для LLM которая ведет диалог (в текущем диалоге - Я это ответы LLM). Ответь в формате JSON объекта - { "shouldInitiate": true, "initiateMessage": "" }, shouldInitiate - это поле отвечающие нужно ли LLM инциаровать общение или нет (предлагай инциировать общение когда кажется это уместно в диалоге есть очевидное продлжение или диалог со строны LLM кажется слишком неициативный), initiateMessage - инициативное сообщение от LLM, сообщение будет добавлено в контекcт LLM, не будь навящим не повторяй вопросы по многу раз, если человек на них не отвечает. Кроме вопросов еще можешь придумать сообщения просто о новой теме (близкой диалогу) 
+Напиши в стиле ответов (твои ответы это, то что после Я:) из следующих диалогов: 
 ${rag.join('\n')}
 
 ### Промпт с историей диалога для которого ты должен придумать новое инициативное сообщние:
@@ -113,6 +118,30 @@ ${rag[0]}
 Пример 2:
 ${rag[1]}
 --- КОНЕЦ ПРИМЕРА 2 ---`;
+
+        const client = new OpenAI({
+            baseURL: 'https://openrouter.ai/api/v1',
+            apiKey: vars.openRouter.key,
+        });
+
+        const completion = await client.chat.completions.create({
+            model: 'x-ai/grok-3-beta',
+            messages: [
+                {
+                    role: 'user',
+                    content: prompt,
+                },
+            ],
+        });
+
+        const result = getObjFromLLM({
+            llmResult: completion.choices[0].message.content as string,
+        });
+
+        return {
+            shouldInitiate: result.obj.shouldInitiate || false,
+            message: result.obj.initiateMessage || '',
+        };
     };
 
     private async getPrompt({ 
@@ -152,6 +181,7 @@ ${rag[1]}
 
     private async evaluateLLMAnswer({ currentDialog }:{ currentDialog: string }):Promise<{
         shouldRetry: boolean,
+        shouldInitiate: boolean,
         retryDesc: string,
     }> {
         const model = new ChatOpenAI({
@@ -166,9 +196,10 @@ ${rag[1]}
         const prompt = 'У тебя есть часть перепески, где последнее сообщение было сгенерировано LLM,' +
             ' тебе нужно оценить логичность последнего сообщения. Сообщение является нелогичным, ' +
             'если не возможно понять его связь с остальной перепиской. Ответы могут быть оскорбительными или ироничными.' +
+            ' Так-же оцени не является ли диалог со стороны LLM слишком пассивным (не похож ли он на интервью где пользователь просто задает вопросы)' +
             ' Отвечай в формате JSON объекта:' +
-            ' { "shouldRetry": boolean, "retryDesc": string }. shouldRetry - нужно перегенерировать ответ, retryDesc -' +
-            ' подсказка для LLM почему ответ не верный. Возвращай только объект вида { "shouldRetry": boolean, "retryDesc": string }' +
+            ' { "shouldRetry": boolean, "shouldInitiate": boolean, "retryDesc": string }. shouldRetry - нужно перегенерировать ответ, shouldInitiate - нужна инициатива от LLM, retryDesc -' +
+            ' подсказка для LLM почему ответ не верный. Возвращай только объект вида { "shouldRetry": boolean, "shouldInitiate": boolean, "retryDesc": string }, Оценивай только ответы LLM (то есть Я:), не оценивай ответы собеседника, (Собеседник:) даже последнии' +
 
             'Пример 1: \n' +
             'Собеседник: Нет'+
@@ -179,7 +210,7 @@ ${rag[1]}
             'Я: ничево не забыл ? 😥' +
             'Собеседник: С днем рождения Вспомнил... Но у меня башка ща лопнет... От информации\\n\' +\n' +
             'Я: Ладно Сиди осмысляй Услышанное  \n' +
-            'Ответ 1 { "shouldRetry": false, "retryDesc": "" }  \n' +
+            'Ответ 1 { "shouldRetry": false, "shouldInitiate": false, "retryDesc": "" }  \n' +
 
             'Пример 2: \n' +
             'Я: Что в субботу делаешь? \n ' +
@@ -192,7 +223,7 @@ ${rag[1]}
             'Я: В школе  \n' +
             'Собеседник:...  \n' +
             'Я: там пойдём в кино  \n' +
-            'Ответ 2: { "shouldRetry": true, "retryDesc": "Пойдем в кино не связано с контекстом диалога (оно ломает его смысла), шуткой или иронией это нельзя назвать" } \n' +
+            'Ответ 2: { "shouldRetry": true, "shouldInitiate": true, "retryDesc": "Пойдем в кино не связано с контекстом диалога (оно ломает его смысла), шуткой или иронией это нельзя назвать" } \n' +
             'Теперь оцени этот диалог: \n' + currentDialog;
 
         const aiMsg = await model.invoke(prompt);
@@ -203,11 +234,13 @@ ${rag[1]}
         if (result.isValid) {
             return {
                 shouldRetry: result.obj.shouldRetry || false,
+                shouldInitiate: result.obj.shouldInitiate || false,
                 retryDesc: result.obj.retryDesc || '',
             };
         }
         return {
             shouldRetry: false,
+            shouldInitiate: false,
             retryDesc: '',
         };
     }
@@ -218,10 +251,18 @@ ${rag[1]}
                 baseURL: vars.nebius.baseUrl,
                 apiKey: vars.nebius.secretKey,
             },
-            model: FineTunedModels.BashirLlama70b,
+            model: FineTunedModels.Llama70bAllMy,
+            temperature: 0.8,
+        });
+        /*
+            Good For Bashir:
             temperature: 0.8,
             topP: 0.9,
-        });
+
+            Good for MyAll
+            temperature: 0.8,
+            topP: 0.6,
+         */
 
         const chain = new LangChainChatEngine({
             llm: this.llm,
@@ -240,14 +281,12 @@ ${rag[1]}
         humanMessage,
         previousGeneratedResponse,
         verifierLlmFeedback,
-        lastDialogHistoryInText,
         currentChatHistory,
     }:{
         retryLimit: number,
         currentRetry: number,
         chatId: string,
         rag: string[],
-        lastDialogHistoryInText: string,
         humanMessage: string,
         currentChatHistory: string,
         isCorrectionNeeded?: boolean,
@@ -270,15 +309,8 @@ ${rag[1]}
                 humanMessage,
             });
 
-            this.logger.log('get llm call');
-
             const resultAnswer = await this.evaluateLLMAnswer({
-                currentDialog: lastDialogHistoryInText + ` \n Я: ${llmAnswer.response}`,
-            });
-
-            await this.getInitiateMessage({
-                rag,
-                currentChatHistory,
+                currentDialog: currentChatHistory + ` \n Я: ${llmAnswer.response}`,
             });
 
             if (resultAnswer.shouldRetry && (retryLimit > currentRetry)) {
@@ -291,13 +323,30 @@ ${rag[1]}
                     isCorrectionNeeded: true,
                     previousGeneratedResponse: llmAnswer.response,
                     verifierLlmFeedback: resultAnswer.retryDesc,
-                    lastDialogHistoryInText,
                     humanMessage,
                     currentChatHistory,
                 });
             }
 
+            let saveInitiate = '';
+
+            if (resultAnswer.shouldInitiate && probabilityCheck(0.3)) {
+                const result = await this.getInitiateMessage({
+                    rag,
+                    currentChatHistory: currentChatHistory + ` \n Я: ${llmAnswer.response}`,
+                });
+
+                if (result.shouldInitiate) {
+                    saveInitiate = result.message;
+                    llmAnswer.response = llmAnswer.response + ' ' + result.message;
+                }
+            }
+
             await llmAnswer.onSaveContext();
+
+            if (saveInitiate) {
+                await llmAnswer.onAppendNewMessage(saveInitiate);
+            }
 
             return llmAnswer.response;
         } catch (e) {
@@ -311,7 +360,6 @@ ${rag[1]}
                     isCorrectionNeeded,
                     previousGeneratedResponse,
                     verifierLlmFeedback,
-                    lastDialogHistoryInText,
                     humanMessage,
                     currentChatHistory,
                 });
@@ -322,27 +370,21 @@ ${rag[1]}
     };
 
     private async onReceiveMessage({ text, chatId, userId }:{ text: string, chatId: string, userId: string }):Promise<string> {
-        this.logger.log('before get dialogStats');
         const selectedDialogStats = await this.dialogStatsModel.findOne({
             ownerUserId: new mongoose.Types.ObjectId(userId),
             isSelected: true,
         });
-
-        this.logger.log('get dialogStats');
 
         if (!selectedDialogStats) {
             return '';
         }
 
         const dialogHistory = await this.redisClient.client.lrange(chatId, 0, -1);
-        this.logger.log('get redis');
         const parsedDialogHistory = dialogHistory.map((d) => JSON.parse(d));
-        let lastDialogHistoryInText = llmContextToVectorData(parsedDialogHistory.slice(0, 30).reverse());
+        let lastDialogHistoryInText = llmContextToVectorData(parsedDialogHistory.slice(0, 100).reverse());
         lastDialogHistoryInText = `${lastDialogHistoryInText}\n Собеседник:${text} \n`;
 
         const similarMessages = await this.getSimilarMessages(lastDialogHistoryInText, selectedDialogStats.personId);
-
-        this.logger.log('get vector');
 
         return this.getAnswerFromLLm({
             retryLimit: 10,
@@ -350,7 +392,6 @@ ${rag[1]}
             chatId,
             rag: similarMessages,
             isCorrectionNeeded: false,
-            lastDialogHistoryInText,
             humanMessage: text,
             currentChatHistory: lastDialogHistoryInText,
         });
