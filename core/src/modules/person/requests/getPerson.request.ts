@@ -1,6 +1,7 @@
 import { IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PersonPublic } from 'schemas/person.scheme';
+import { DialogStatsPublic } from 'schemas/dialogStats.scheme';
 
 export class GetPersonParams {
     @IsString()
@@ -9,5 +10,6 @@ export class GetPersonParams {
 }
 
 export interface GetPersonRes {
-    person: PersonPublic
+    person: PersonPublic,
+    dialogs: DialogStatsPublic[]
 }

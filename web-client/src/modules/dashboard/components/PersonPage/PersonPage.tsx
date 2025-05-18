@@ -46,6 +46,7 @@ const PersonPage = () => {
             />
             <ChatsList
                 personId={state.result.data.person.id}
+                dialogs={state.result.data.dialogs}
             />
             <KnowledgeList
                 knowledge={state.result.data.person.knowledge}

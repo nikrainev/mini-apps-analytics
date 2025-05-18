@@ -3,7 +3,8 @@ import OpenAI from 'openai';
 import { vars } from 'config/vars';
 
 export enum FineTunedModels {
-    BashirLlama70b = 'meta-llama/Llama-3.3-70B-Instruct-LoRa:bashir-lora-EpfX'
+    BashirLlama70b = 'meta-llama/Llama-3.3-70B-Instruct-LoRa:bashir-lora-EpfX',
+    Llama70bAllMy = 'meta-llama/Llama-3.3-70B-Instruct-LoRa:all-dialogs-MRct'
 }
 
 interface InvokeArgs {

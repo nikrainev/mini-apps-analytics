@@ -37,14 +37,6 @@ const ChatItem:FC<IProps> = ({
                             <DataList.ItemLabel>Name</DataList.ItemLabel>
                             <DataList.ItemValue>{chatData.name}</DataList.ItemValue>
                         </DataList.Item>
-                        <DataList.Item>
-                            <DataList.ItemLabel>Messages count</DataList.ItemLabel>
-                            <DataList.ItemValue>{chatData.messagesCount}</DataList.ItemValue>
-                        </DataList.Item>
-                        <DataList.Item>
-                            <DataList.ItemLabel>Messages Dates</DataList.ItemLabel>
-                            <DataList.ItemValue>{`${format(new Date(chatData.dateStart), 'yyyy-MM-dd HH:mm')} — ${format(new Date(chatData.dateEnd), 'yyyy-MM-dd HH:mm')}`}</DataList.ItemValue>
-                        </DataList.Item>
                         <Chart.Root width="60" height="12" chart={chart}>
                             <LineChart data={chart.data}>
                                 {chart.series.map((item) => (

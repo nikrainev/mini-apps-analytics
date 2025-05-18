@@ -41,3 +41,5 @@ jobs:
             REDIS_USERNAME: ${{ vars.REDIS_USERNAME }}
             REDIS_PASSWORD: ${{ vars.REDIS_PASSWORD }}
             TG_BOT_WEBHOOK: ${{ vars.TG_BOT_WEBHOOK }}
+            OPENROUTER_API_KEY: ${{ vars.OPENROUTER_API_KEY }}
+            ME_USER_ID: ${{ vars.ME_USER_ID }}

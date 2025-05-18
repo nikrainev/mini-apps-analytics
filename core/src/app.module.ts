@@ -15,11 +15,13 @@ import { PersonModule } from './modules/person/person.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { RagModule } from './modules/rag/rag.module';
 import { DialogsDataModule } from './modules/dialogsData/dialogsData.module';
+import { BullModule } from '@nestjs/bullmq';
 
 const {
     mongo: {
         connectionString,
     },
+    redis,
 } = vars;
 
 @Global()
@@ -39,6 +41,14 @@ const {
         ScheduleModule.forRoot(),
         MongooseModule.forFeature(
             [{ name: User.name, schema: UserSchema } ]),
+        BullModule.forRoot({
+            connection: {
+                host: redis.host,
+                port: redis.port,
+                password: redis.password,
+                username: redis.username,
+            },
+        }),
     ],
     controllers: [],
     providers: [

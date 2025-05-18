@@ -1,12 +1,13 @@
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreatePersonBody, CreatePersonRes } from './requests/createPerson.request';
 import { GetPersonsReq, GetPersonsRes } from './requests/getPersons.request';
 import { GetPersonParams, GetPersonRes } from './requests/getPerson.request';
 import { Person, PersonDocument, PersonPublic } from 'schemas/person.scheme';
-import { PERSON_KNOWLEDGE_COLLECTION } from 'common/const/VECTOR_COLLECTIONS_NAMES';
+import { PERSON_DIALOGS_COLLECTION, PERSON_KNOWLEDGE_COLLECTION } from 'common/const/VECTOR_COLLECTIONS_NAMES';
 import { forwardRef, Inject } from '@nestjs/common';
 import { QdrantProvider } from 'providers/QdrantClient';
+import { DialogStats, DialogStatsDocument, DialogStatsPublic } from 'schemas/dialogStats.scheme';
 
 export class PersonService {
     constructor(
@@ -14,6 +15,8 @@ export class PersonService {
         private personModel: Model<PersonDocument>,
         @Inject(forwardRef(() => QdrantProvider))
         private readonly qdrantProvider: QdrantProvider,
+        @InjectModel(DialogStats.name)
+        private dialogStatsModel: Model<DialogStatsDocument>,
     ) {}
 
     async createPerson({
@@ -43,6 +46,22 @@ export class PersonService {
             },
         });
 
+        await this.qdrantProvider.client.createCollection(PERSON_DIALOGS_COLLECTION({
+            personId: newPerson.id,
+        }), {
+            vectors: {
+                size: 256,
+                distance: 'Cosine',
+            },
+            sparse_vectors: {
+                'sparse-vector-name': {
+                    index: {
+                        on_disk: false,
+                    },
+                },
+            },
+        });
+
         await newPerson.save();
 
         return {
@@ -55,8 +74,13 @@ export class PersonService {
             _id: personId,
         });
 
+        const dialogStats = await this.dialogStatsModel.find({
+            personId: new mongoose.Types.ObjectId(personId),
+        });
+
         return {
             person: new PersonPublic(person as PersonDocument),
+            dialogs: dialogStats.map((d) => new DialogStatsPublic(d as DialogStatsDocument)),
         };
     }
 

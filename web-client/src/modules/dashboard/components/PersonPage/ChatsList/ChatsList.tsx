@@ -4,16 +4,20 @@ import {
     Text,
 } from '@chakra-ui/react';
 
+import { IDialogStats } from '@/shared/types/chat.types';
+
 import { ChatItem } from './ChatItem';
 import styles from './ChatsList.module.scss';
 import { ChatUploader } from './ChatUploader';
 
 interface IProps {
     personId: string,
+    dialogs:  IDialogStats[]
 }
 
 const ChatsList:FC<IProps> = ({
     personId,
+    dialogs,
 }) => {
     return (
         <div className={styles.cont}>
@@ -26,28 +30,20 @@ const ChatsList:FC<IProps> = ({
                 />
             </div>
             <div className={styles.chatsList}>
-                <ChatItem
-                    chatData={{
-                        id: '1',
-                        name: 'Лиза',
-                        dateEnd: '2025-04-16T21:37:45.680Z',
-                        dateStart: '2023-10-16T21:37:45.680Z',
-                        messagesCount: 12394,
-                        uploadedAt: '2025-04-16T21:37:45.680Z',
-                    }}
-                    intensity={[20, 49, 60, 20, 23, 12, 50, 23, 20, 34, 40 ]}
-                />
-                <ChatItem 
-                    chatData={{
-                        id: '1',
-                        name: 'Вася',
-                        dateEnd: '2025-04-16T21:37:45.680Z',
-                        dateStart: '2025-04-16T21:37:45.680Z',
-                        messagesCount: 60745,
-                        uploadedAt: '2025-04-16T21:37:45.680Z',
-                    }} 
-                    intensity={[20, 49, 60, 70, 23, 24, 50, 23, 20, 70, 60]}
-                />
+                {dialogs.map((d) => (
+                    <ChatItem
+                        key={d.id}
+                        chatData={{
+                            id: d.id,
+                            name: d.title,
+                            dateEnd: '2025-04-16T21:37:45.680Z',
+                            dateStart: '2023-10-16T21:37:45.680Z',
+                            messagesCount: d.countStat.myCount + d.countStat.otherCount,
+                            uploadedAt: d.createdAt,
+                        }}
+                        intensity={d.schemeStat.messageChainSize}
+                    />
+                ))}
             </div>
         </div>
     );

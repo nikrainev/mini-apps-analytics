@@ -14,9 +14,9 @@ import {
 import { countMessages } from './queries/countMessages';
 import { countMessagesTime } from './queries/countMessagesTime';
 import { getMessagesScheme, SourceMessage } from './utils/getMessagesScheme';
-import {calculateAverageOfSegments} from "./utils/calculateAverageOfSegments";
+import { calculateAverageOfSegments } from './utils/calculateAverageOfSegments';
 
-const ME_USER_ID = 'user287716767';
+export const ME_USER_ID = 'user287716767';
 
 export class DialogsDataService {
     constructor(
@@ -50,11 +50,12 @@ export class DialogsDataService {
         const newDialogStatsModel = new this.dialogStatsModel({
             title: body.title,
             dialogTitle: result.name,
-            ownerUserId: meUserId,
+            ownerUserId: new Types.ObjectId(meUserId),
+            personId: new Types.ObjectId(personId),
             countStat: messagesCount,
             timeStat: messagesData,
             schemeStat,
-            dialogDataId: newDialogData._id.toString(),
+            dialogDataId: newDialogData._id,
             createdAt: now,
         });
 

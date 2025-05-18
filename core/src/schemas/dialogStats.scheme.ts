@@ -37,6 +37,8 @@ export interface IDialogStats {
     schemeStat: ISchemeStat,
     ownerUserId: string;
     dialogDataId: string;
+    isSelected: boolean;
+    isIndexed: boolean;
     createdAt: DateString;
 }
 
@@ -113,6 +115,34 @@ export class DialogStats {
     dialogDataId: string;
 
     @Prop({
+        type: mongoose.Types.ObjectId,
+        ref: 'Person',
+        required: true,
+    })
+    personId: string;
+
+    @Prop({
+        type: Boolean,
+        default: false,
+        required: true,
+    })
+    isSelected: boolean;
+
+    @Prop({
+        type: Boolean,
+        default: false,
+        required: true,
+    })
+    isIndexed: boolean;
+
+    @Prop({
+        type: Boolean,
+        default: false,
+        required: true,
+    })
+    isStartIndexing: boolean;
+
+    @Prop({
         type: Date,
         default: new Date(),
         required: true,
@@ -121,16 +151,26 @@ export class DialogStats {
 }
 
 export class DialogStatsPublic {
-    constructor(person:DialogStatsDocument) {
-        this.id = person.id;
-        this.title = person.title;
-        this.dialogTitle = person.dialogTitle;
-        this.createdAt = person.createdAt?.toISOString();
+    constructor(stats:DialogStatsDocument) {
+        this.id = stats.id;
+        this.title = stats.title;
+        this.dialogTitle = stats.dialogTitle;
+        this.timeStat = stats.timeStat;
+        this.countStat = stats.countStat;
+        this.schemeStat = stats.schemeStat;
+        this.ownerUserId = stats.ownerUserId.toString();
+        this.dialogDataId = stats.dialogDataId.toString();
+        this.createdAt = stats.createdAt?.toISOString();
     }
 
     id: mongoose.Types.ObjectId;
     title: string;
     dialogTitle: string;
+    timeStat: IMessagesTimeStat;
+    countStat: IMessagesCountStat;
+    schemeStat: ISchemeStat;
+    ownerUserId: string;
+    dialogDataId: string;
     createdAt: DateString;
 }
 

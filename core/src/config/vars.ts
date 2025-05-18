@@ -41,4 +41,8 @@ export const vars = Object.freeze({
         meBotToken: parseString(process.env.ME_BOT_TOKEN, ''),
         botWebHookUrl: parseString(process.env.TG_BOT_WEBHOOK, ''),
     },
+    openRouter: {
+        key: parseString(process.env.OPENROUTER_API_KEY, ''),
+    },
+    meUserId: parseString(process.env.ME_USER_ID, ''),
 });

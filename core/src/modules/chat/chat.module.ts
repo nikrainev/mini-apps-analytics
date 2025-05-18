@@ -9,9 +9,18 @@ import { RedisClient } from 'providers/RedisClient';
 import { TelegramAPI } from 'providers/Telegram';
 import { QdrantProvider } from 'providers/QdrantClient';
 import { YandexMLProvider } from 'providers/YandexML';
+import { ChatCronService } from './chat.cron';
+import { DialogData, DialogDataSchema } from 'schemas/dialogData.scheme';
+import { DialogStats, DialogStatsSchema } from 'schemas/dialogStats.scheme';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-    imports: [],
+    imports: [
+        MongooseModule.forFeature([
+            { name: DialogData.name, schema: DialogDataSchema },
+            { name: DialogStats.name, schema: DialogStatsSchema },
+        ]),
+    ],
     controllers: [ChatController],
     providers: [
         ChatService,
@@ -20,6 +29,7 @@ import { YandexMLProvider } from 'providers/YandexML';
         TelegramAPI,
         QdrantProvider,
         YandexMLProvider,
+        ChatCronService,
     ],
     exports: [],
 })
