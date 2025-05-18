@@ -322,6 +322,7 @@ ${rag[1]}
     };
 
     private async onReceiveMessage({ text, chatId, userId }:{ text: string, chatId: string, userId: string }):Promise<string> {
+        this.logger.log('before get dialogStats');
         const selectedDialogStats = await this.dialogStatsModel.findOne({
             ownerUserId: new mongoose.Types.ObjectId(userId),
             isSelected: true,
