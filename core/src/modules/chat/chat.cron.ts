@@ -15,14 +15,13 @@ import { chainToVectorData } from '../dialogsData/utils/chainToVectorData';
 import PQueue from '@esm2cjs/p-queue';
 import { PERSON_DIALOGS_COLLECTION } from 'common/const/VECTOR_COLLECTIONS_NAMES';
 import { v4 as uuidv4 } from 'uuid';
+import { MessageQueue, MessageQueueDocument } from '../../schemas/messageQueue.scheme';
+import { differenceInSeconds } from 'date-fns';
+import {ChatService} from "./chat.service";
 
 @Injectable()
 export class ChatCronService {
     constructor(
-        @Inject(RedisClient)
-        private readonly redisClient: RedisClient,
-        @Inject(forwardRef(() => TelegramAPI))
-        private readonly telegram: TelegramAPI,
         @Inject(forwardRef(() => MyLogger))
         private readonly logger: MyLogger,
         @Inject(forwardRef(() => QdrantProvider))
@@ -33,10 +32,36 @@ export class ChatCronService {
         private dialogDataModel: Model<DialogDataDocument>,
         @InjectModel(DialogStats.name)
         private dialogStatsModel: Model<DialogStatsDocument>,
+        @InjectModel(MessageQueue.name)
+        private messageQueueModel: Model<MessageQueueDocument>,
+        @Inject(forwardRef(() => ChatService))
+        private readonly chatService: ChatService,
     ){}
 
     @Cron(CronExpression.EVERY_5_SECONDS)
-    async handleEndLessonForPupil() {
+    async fetchMessages() {
+        const currentMessages = await this.messageQueueModel.find().sort({
+            createdAt: -1,
+        });
+
+        const lastMessage = currentMessages?.[0];
+
+        if (lastMessage) {
+            const lastMessageDate = lastMessage.createdAt;
+            const diffFromNow = differenceInSeconds(new Date(), lastMessageDate);
+
+            if (diffFromNow > 20) {
+                const resultMessage = currentMessages.map((m) => m.text).reverse().join(' ');
+                const chatId = +lastMessage.chatId;
+
+                await this.messageQueueModel.deleteMany({});
+
+                await this.chatService.onBotMessageReceived({
+                    text: resultMessage,
+                    chatId,
+                });
+            }
+        }
     }
 
     @Cron(CronExpression.EVERY_30_SECONDS)

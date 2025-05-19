@@ -18,8 +18,9 @@ import { MyLogger } from 'config/MyLogger';
 import { TelegramAPI } from 'providers/Telegram';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import TelegramBot = require('node-telegram-bot-api')
-import { splitTextIntoParts } from './utils/splitTextIntoPairs';
-import { getSendDelay } from './utils/getSendDelay';
+import { InjectModel } from '@nestjs/mongoose';
+import { MessageQueue, MessageQueueDocument } from '../../schemas/messageQueue.scheme';
+import { Model } from 'mongoose';
 
 @Controller('chat')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -32,6 +33,8 @@ export class ChatController {
         private readonly logger: MyLogger,
         @Inject(forwardRef(() => TelegramAPI))
         private readonly telegram: TelegramAPI,
+        @InjectModel(MessageQueue.name)
+        private messageQueueModel: Model<MessageQueueDocument>,
     ) {}
 
 
@@ -40,7 +43,16 @@ export class ChatController {
         @Req() req:IRequest,
         @Body() body:SendMessageBody,
     ):Promise<any> {
-        return this.chatService.sendMessage(body);
+
+        const newMessage = new this.messageQueueModel({
+            chatId: 'body.message.chat.id.toString()',
+            text: 'body.message.text',
+            createdAt: new Date(),
+        });
+
+        await newMessage.save();
+        
+        return 'this.chatService.sendMessage(body);';
     }
 
     @Post(`tg-bot2/${vars.telegram.meBotToken}`)
@@ -52,7 +64,17 @@ export class ChatController {
         this.logger.log('Received any message from bot:');
 
         if (body.message && body.message?.text && (body.message?.text !== '/start')) {
-            await this.chatService.onBotMessageReceived(body.message);
+            if (!body.message.from?.id || !body.message.text) {
+                return true;
+            }
+
+            const newMessage = new this.messageQueueModel({
+                chatId: body.message.chat.id.toString(),
+                text: body.message.text,
+                createdAt: new Date(),
+            });
+
+            await newMessage.save();
         }
 
         return true;

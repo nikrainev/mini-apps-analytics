@@ -14,13 +14,15 @@ import { DialogData, DialogDataSchema } from 'schemas/dialogData.scheme';
 import { DialogStats, DialogStatsSchema } from 'schemas/dialogStats.scheme';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BullModule } from '@nestjs/bullmq';
-import {SendMessageConsumer} from "./queue/chat.consumer";
+import { SendMessageConsumer } from './queue/chat.consumer';
+import { MessageQueue, MessageQueueSchema } from '../../schemas/messageQueue.scheme';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
             { name: DialogData.name, schema: DialogDataSchema },
             { name: DialogStats.name, schema: DialogStatsSchema },
+            { name: MessageQueue.name, schema: MessageQueueSchema },
         ]),
         BullModule.registerQueue({
             name: 'sendMessage',

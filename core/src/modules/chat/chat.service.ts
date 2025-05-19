@@ -28,6 +28,7 @@ import { splitTextIntoParts } from './utils/splitTextIntoPairs';
 import { getSendDelay } from './utils/getSendDelay';
 
 
+
 @Injectable()
 export class ChatService {
     constructor(
@@ -47,7 +48,6 @@ export class ChatService {
     ){}
     
     llm:BaseChatModel;
-    chatEngine:ChatEngine;
     
     async sendMessage(body:SendMessageBody):Promise<any> {
         const result = await this.onReceiveMessage({
@@ -81,16 +81,15 @@ export class ChatService {
         });
     }
 
-    async onBotMessageReceived(message:TelegramBot.Message):Promise<void> {
-        if (!message.from?.id || !message.text) {
-            return;
-        }
-
+    async onBotMessageReceived(message:{
+        chatId: number,
+        text: string,
+    }):Promise<void> {
         this.logger.log('Received text message from bot:', message);
 
         const responseText = await this.onReceiveMessage({
             text: message.text,
-            chatId: message.chat.id.toString(),
+            chatId: message.chatId.toString(),
             userId: vars.meUserId,
         });
 
@@ -101,7 +100,7 @@ export class ChatService {
 
         const jobPromises = sendDelay.map((d) => this.sendMessageQueue.add('messagechunk', {
             text: d.str,
-            chatId: message.chat.id,
+            chatId: message.chatId,
         }, {
             delay: d.delayMs,
         }));
