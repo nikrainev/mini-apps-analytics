@@ -34,10 +34,11 @@ export class ChatEngine {
         });
     }
 
-    async invoke(input:{
+    async call(input:{
         role: string,
         content: string
     }[]):Promise<string> {
+        console.log('invoke', input);
         const output = await this.app.invoke({ messages: input }, this.config);
 
         return output.messages[output.messages.length - 1];

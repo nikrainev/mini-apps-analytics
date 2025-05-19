@@ -21,7 +21,11 @@ import { getObjFromLLM } from './utils/getObjFromLLM';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import TelegramBot = require('node-telegram-bot-api');
 import OpenAI from 'openai';
-import {probabilityCheck} from "./utils/propablityCheck";
+import { probabilityCheck } from './utils/propablityCheck';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { splitTextIntoParts } from './utils/splitTextIntoPairs';
+import { getSendDelay } from './utils/getSendDelay';
 
 
 @Injectable()
@@ -39,6 +43,7 @@ export class ChatService {
         private readonly yandexML: YandexMLProvider,
         @InjectModel(DialogStats.name)
         private dialogStatsModel: Model<DialogStatsDocument>,
+        @InjectQueue('sendMessage') private sendMessageQueue: Queue
     ){}
     
     llm:BaseChatModel;
@@ -89,7 +94,19 @@ export class ChatService {
             userId: vars.meUserId,
         });
 
-        await this.telegram.client.sendMessage(message.chat.id, responseText);
+        const splitStr = splitTextIntoParts('Думаю, в такой ситуации человечество начнёт придумывать новые способы творческого самовыражения, типа, использовать AI для генерации искусства 🤔. Например, художники смогут использовать AI для создания новых форм искусства или музыки, где роль человека будет заключаться в том, чтобы придумывать концепции, а AI будет помогать в их реализации 🤔. А ты думаешь, что будет с научной работой, как она будет развиваться? 🤔', 100, 40);
+        const sendDelay = getSendDelay({
+            messages: splitStr,
+        });
+
+        const jobPromises = sendDelay.map((d) => this.sendMessageQueue.add('messagechunk', {
+            text: d.str,
+            chatId: message.chat.id,
+        }, {
+            delay: d.delayMs,
+        }));
+
+        await Promise.all(jobPromises);
     }
 
     private getInitiateMessage = async ({ rag, currentChatHistory }:{ rag: string[], currentChatHistory: string }):Promise<{
@@ -253,6 +270,7 @@ ${rag[1]}
             },
             model: FineTunedModels.Llama70bAllMy,
             temperature: 0.8,
+            topP: 0.6,
         });
         /*
             Good For Bashir:

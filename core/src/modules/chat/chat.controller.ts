@@ -18,6 +18,8 @@ import { MyLogger } from 'config/MyLogger';
 import { TelegramAPI } from 'providers/Telegram';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import TelegramBot = require('node-telegram-bot-api')
+import { splitTextIntoParts } from './utils/splitTextIntoPairs';
+import { getSendDelay } from './utils/getSendDelay';
 
 @Controller('chat')
 @UseInterceptors(ClassSerializerInterceptor)

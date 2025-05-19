@@ -13,6 +13,8 @@ import { ChatCronService } from './chat.cron';
 import { DialogData, DialogDataSchema } from 'schemas/dialogData.scheme';
 import { DialogStats, DialogStatsSchema } from 'schemas/dialogStats.scheme';
 import { MongooseModule } from '@nestjs/mongoose';
+import { BullModule } from '@nestjs/bullmq';
+import {SendMessageConsumer} from "./queue/chat.consumer";
 
 @Module({
     imports: [
@@ -20,6 +22,9 @@ import { MongooseModule } from '@nestjs/mongoose';
             { name: DialogData.name, schema: DialogDataSchema },
             { name: DialogStats.name, schema: DialogStatsSchema },
         ]),
+        BullModule.registerQueue({
+            name: 'sendMessage',
+        }),
     ],
     controllers: [ChatController],
     providers: [
@@ -30,6 +35,7 @@ import { MongooseModule } from '@nestjs/mongoose';
         QdrantProvider,
         YandexMLProvider,
         ChatCronService,
+        SendMessageConsumer,
     ],
     exports: [],
 })
