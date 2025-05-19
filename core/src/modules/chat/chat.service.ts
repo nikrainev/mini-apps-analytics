@@ -1,4 +1,3 @@
-import { ChatEngine } from './utils/ChatEngine';
 import { SendMessageBody } from './requests/sendMessage.request';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { RedisClient } from 'providers/RedisClient';
@@ -18,8 +17,6 @@ import mongoose, { Model } from 'mongoose';
 import { llmContextToVectorData } from '../dialogsData/utils/llmContextToVectorData';
 import { ChatGenerationPromptInputs, MessengerPrompts } from './utils/MessengerPrompt';
 import { getObjFromLLM } from './utils/getObjFromLLM';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import TelegramBot = require('node-telegram-bot-api');
 import OpenAI from 'openai';
 import { probabilityCheck } from './utils/propablityCheck';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -93,7 +90,7 @@ export class ChatService {
             userId: vars.meUserId,
         });
 
-        const splitStr = splitTextIntoParts(responseText, 100, 40);
+        const splitStr = await this.getAnswerSplit(responseText);
         const sendDelay = getSendDelay({
             messages: splitStr,
         });
@@ -179,7 +176,7 @@ ${rag[1]}
 
         const initialInputs: ChatGenerationPromptInputs = {
             userNameOrNickname: 'Никита',
-            userPersonalityDetails: 'Мне 23 года я мужчина. Живу в Санкт-Петербурге, заканчиваю магистратуру. Люблю шутить (часто иронизирую), часто использую эмодзи. Отвечаю кратко, но по делу. Интересуюсь программированием, AI, велосипедами.',
+            userPersonalityDetails: 'Мне 23 года я мужчина. Живу в Санкт-Петербурге, заканчиваю магистратуру. Люблю шутить (часто иронизирую). Отвечаю кратко, но по делу. Интересуюсь программированием, AI, велосипедами.',
             ragExample1: rag1,
             ragExample2: rag2,
             isCorrectionNeeded: false,
@@ -193,6 +190,42 @@ ${rag[1]}
         }
 
         return messengerPrompts.formatChatPrompt(initialInputs);
+    };
+
+    private getAnswerSplit = async (answer:string):Promise<string[]> => {
+        try {
+            const client = new OpenAI({
+                baseURL: 'https://openrouter.ai/api/v1',
+                apiKey: vars.openRouter.key,
+            });
+
+            const prompt = 'Разбей строку на сообщения как обычно пишут люди в мессенджерах, разбивай по смыслу, так-же эмодзи тоже стоит выделять отдельно (опять же если это будет выглядеть странно, то не выделяй),  верни ответ в виде JSON объекта: { "arr": string[] }, где arr это разбитые строки. Не меня строку, только разбивай её.\n' +
+                '\n' +
+                'Разбей следующуй строку: \n'
+
+            const completion = await client.chat.completions.create({
+                model: 'google/gemini-2.5-pro-preview',
+                messages: [
+                    {
+                        role: 'user',
+                        content: prompt + answer,
+                    },
+                ],
+            });
+
+            const result = getObjFromLLM({
+                llmResult: completion.choices[0].message.content as string,
+            });
+
+            if (result.isValid && result.obj.arr) {
+                return result.obj.arr;
+            }
+
+            return  splitTextIntoParts(answer, 100, 40);
+        } catch (e) {
+            return  splitTextIntoParts(answer, 100, 40);
+        }
+
     };
 
     private async evaluateLLMAnswer({ currentDialog }:{ currentDialog: string }):Promise<{
