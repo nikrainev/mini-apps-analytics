@@ -201,7 +201,7 @@ ${rag[1]}
 
             const prompt = 'Разбей строку на сообщения как обычно пишут люди в мессенджерах, разбивай по смыслу, так-же эмодзи тоже стоит выделять отдельно (опять же если это будет выглядеть странно, то не выделяй),  верни ответ в виде JSON объекта: { "arr": string[] }, где arr это разбитые строки. Не меня строку, только разбивай её.\n' +
                 '\n' +
-                'Разбей следующуй строку: \n'
+                'Разбей следующуй строку: \n';
 
             const completion = await client.chat.completions.create({
                 model: 'google/gemini-2.5-pro-preview',
@@ -300,9 +300,9 @@ ${rag[1]}
                 baseURL: vars.nebius.baseUrl,
                 apiKey: vars.nebius.secretKey,
             },
-            model: FineTunedModels.Llama70bAllMy,
+            model: FineTunedModels.BashirLlama70b,
             temperature: 0.8,
-            topP: 0.6,
+            topP: 0.9,
         });
         /*
             Good For Bashir:
