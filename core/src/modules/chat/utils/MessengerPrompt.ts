@@ -39,7 +39,10 @@ export class MessengerPrompts {
 
 Пример 2:
 {ragExample2}
---- КОНЕЦ ПРИМЕРА 2 ---`,
+--- КОНЕЦ ПРИМЕРА 2 ---
+
+Ответь на последнее сообщение из Истории текущего диалога:
+`,
         ];
 
         let taskSpecificSection: string;

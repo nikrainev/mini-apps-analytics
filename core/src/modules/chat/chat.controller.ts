@@ -43,6 +43,7 @@ export class ChatController {
         @Req() req:IRequest,
         @Body() body:SendMessageBody,
     ):Promise<any> {
+        return this.chatService.getAnswerSplit('Да Сейчас вроде это норм Это наоборот привлекает Как челик с Опытом');
         return this.chatService.sendMessage(body);
     }
 

@@ -192,7 +192,7 @@ ${rag[1]}
         return messengerPrompts.formatChatPrompt(initialInputs);
     };
 
-    private getAnswerSplit = async (answer:string):Promise<string[]> => {
+    public getAnswerSplit = async (answer:string):Promise<string[]> => {
         try {
             const client = new OpenAI({
                 baseURL: 'https://openrouter.ai/api/v1',
@@ -223,6 +223,7 @@ ${rag[1]}
 
             return  splitTextIntoParts(answer, 100, 40);
         } catch (e) {
+            console.log('errror', e);
             return  splitTextIntoParts(answer, 100, 40);
         }
 
@@ -247,7 +248,7 @@ ${rag[1]}
             'если не возможно понять его связь с остальной перепиской. Ответы могут быть оскорбительными или ироничными.' +
             ' Так-же оцени не является ли диалог со стороны LLM слишком пассивным (не похож ли он на интервью где пользователь просто задает вопросы)' +
             ' Отвечай в формате JSON объекта:' +
-            ' { "shouldRetry": boolean, "shouldInitiate": boolean, "retryDesc": string }. shouldRetry - нужно перегенерировать ответ, shouldInitiate - нужна инициатива от LLM, retryDesc -' +
+            ' { "shouldRetry": boolean, "shouldInitiate": boolean, "retryDesc": string }. shouldRetry - нужно перегенерировать ответ (если мало инциативы то не нужно перегенировать, только пометь это в shouldInitiate), shouldInitiate - нужна инициатива от LLM, retryDesc -' +
             ' подсказка для LLM почему ответ не верный. Возвращай только объект вида { "shouldRetry": boolean, "shouldInitiate": boolean, "retryDesc": string }, Оценивай только ответы LLM (то есть Я:), не оценивай ответы собеседника, (Собеседник:) даже последнии' +
 
             'Пример 1: \n' +
