@@ -438,7 +438,7 @@ ${rag[1]}
         const similarMessages = await this.getSimilarMessages(lastDialogHistoryInText, selectedDialogStats.personId);
 
         return this.getAnswerFromLLm({
-            retryLimit: 10,
+            retryLimit: 8,
             currentRetry: 1,
             chatId,
             rag: similarMessages,
