@@ -43,16 +43,7 @@ export class ChatController {
         @Req() req:IRequest,
         @Body() body:SendMessageBody,
     ):Promise<any> {
-
-        const newMessage = new this.messageQueueModel({
-            chatId: 'body.message.chat.id.toString()',
-            text: 'body.message.text',
-            createdAt: new Date(),
-        });
-
-        await newMessage.save();
-        
-        return 'this.chatService.sendMessage(body);';
+        return this.chatService.sendMessage(body);
     }
 
     @Post(`tg-bot2/${vars.telegram.meBotToken}`)
