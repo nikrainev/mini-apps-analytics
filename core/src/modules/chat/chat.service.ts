@@ -371,9 +371,9 @@ ${rag[1]}
                 });
             }
 
-            let saveInitiate = '';
+            //let saveInitiate = '';
 
-            if (resultAnswer.shouldInitiate && probabilityCheck(0.3)) {
+            /*if (resultAnswer.shouldInitiate && probabilityCheck(0.3)) {
                 const result = await this.getInitiateMessage({
                     rag,
                     currentChatHistory: currentChatHistory + ` \n Я: ${llmAnswer.response}`,
@@ -383,13 +383,13 @@ ${rag[1]}
                     saveInitiate = result.message;
                     llmAnswer.response = llmAnswer.response + ' ' + result.message;
                 }
-            }
+            }*/
 
             await llmAnswer.onSaveContext();
 
-            if (saveInitiate) {
+            /*if (saveInitiate) {
                 await llmAnswer.onAppendNewMessage(saveInitiate);
-            }
+            }*/
 
             return llmAnswer.response;
         } catch (e) {
