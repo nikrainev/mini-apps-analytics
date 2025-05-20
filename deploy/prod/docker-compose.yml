@@ -63,6 +63,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - TG_BOT_WEBHOOK=${TG_BOT_WEBHOOK}
       - ME_USER_ID=${ME_USER_ID}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - mongo
       - qdrant
