@@ -151,6 +151,8 @@ ${rag[1]}
             llmResult: completion.choices[0].message.content as string,
         });
 
+        this.logger.log(`initiate idea ${result.obj.shouldInitiate}, ${result.obj.initiateMessage}`);
+
         return {
             shouldInitiate: result.obj.shouldInitiate || false,
             message: result.obj.initiateMessage || '',
@@ -204,7 +206,7 @@ ${rag[1]}
                 'Разбей следующуй строку: \n';
 
             const completion = await client.chat.completions.create({
-                model: 'google/gemini-2.5-pro-preview',
+                model: 'x-ai/grok-3-beta',
                 messages: [
                     {
                         role: 'user',
@@ -301,8 +303,8 @@ ${rag[1]}
                 baseURL: vars.nebius.baseUrl,
                 apiKey: vars.nebius.secretKey,
             },
-            model: FineTunedModels.BashirLlama70b,
-            temperature: 0.8,
+            model: FineTunedModels.Llama70bAllMy,
+            temperature: 0.9,
             topP: 0.9,
         });
         /*
@@ -311,8 +313,8 @@ ${rag[1]}
             topP: 0.9,
 
             Good for MyAll
-            temperature: 0.8,
-            topP: 0.6,
+            temperature: 0.9,
+            topP: 0.9,
          */
 
         const chain = new LangChainChatEngine({
