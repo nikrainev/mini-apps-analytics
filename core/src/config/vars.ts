@@ -45,4 +45,7 @@ export const vars = Object.freeze({
         key: parseString(process.env.OPENROUTER_API_KEY, ''),
     },
     meUserId: parseString(process.env.ME_USER_ID, ''),
+    openAI: {
+        key: parseString(process.env.OPENAI_API_KEY, ''),
+    },
 });

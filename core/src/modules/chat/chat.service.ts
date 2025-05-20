@@ -17,12 +17,12 @@ import mongoose, { Model } from 'mongoose';
 import { llmContextToVectorData } from '../dialogsData/utils/llmContextToVectorData';
 import { ChatGenerationPromptInputs, MessengerPrompts } from './utils/MessengerPrompt';
 import { getObjFromLLM } from './utils/getObjFromLLM';
-import OpenAI from 'openai';
 import { probabilityCheck } from './utils/propablityCheck';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { splitTextIntoParts } from './utils/splitTextIntoPairs';
 import { getSendDelay } from './utils/getSendDelay';
+import { ChatXAI } from "@langchain/xai";
 
 
 
@@ -134,11 +134,9 @@ ${rag[0]}
 ${rag[1]}
 --- КОНЕЦ ПРИМЕРА 2 ---`;
         const client = new ChatOpenAI({
-            configuration: {
-                baseURL: 'https://openrouter.ai/api/v1',
-                apiKey: vars.openRouter.key,
-            },
-            model: 'x-ai/grok-3-beta',
+            model: 'gpt-4o',
+            temperature: 0.7,
+            apiKey: vars.openAI.key,
         });
 
         const completion = await client.invoke(prompt);
@@ -193,11 +191,9 @@ ${rag[1]}
     public getAnswerSplit = async (answer:string):Promise<string[]> => {
         try {
             const client = new ChatOpenAI({
-                configuration: {
-                    baseURL: 'https://openrouter.ai/api/v1',
-                    apiKey: vars.openRouter.key,
-                },
-                model: 'x-ai/grok-3-beta',
+                model: 'gpt-4o',
+                temperature: 0.3,
+                apiKey: vars.openAI.key,
             });
 
             const prompt = 'Разбей строку на сообщения как обычно пишут люди в мессенджерах, разбивай по смыслу, так-же эмодзи тоже стоит выделять отдельно (опять же если это будет выглядеть странно, то не выделяй),  верни ответ в виде JSON объекта: { "arr": string[] }, где arr это разбитые строки. Не меня строку, только разбивай её.\n' +
@@ -213,6 +209,7 @@ ${rag[1]}
             this.logger.log(`success split ${result.obj}, ${completion.content}`);
 
             if (result.isValid && result.obj.arr) {
+                console.log('valid')
                 return result.obj.arr;
             }
 

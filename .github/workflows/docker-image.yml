@@ -43,3 +43,4 @@ jobs:
             TG_BOT_WEBHOOK: ${{ vars.TG_BOT_WEBHOOK }}
             OPENROUTER_API_KEY: ${{ vars.OPENROUTER_API_KEY }}
             ME_USER_ID: ${{ vars.ME_USER_ID }}
+            OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
