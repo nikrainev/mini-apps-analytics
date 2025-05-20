@@ -131,24 +131,18 @@ ${rag[0]}
 Пример 2:
 ${rag[1]}
 --- КОНЕЦ ПРИМЕРА 2 ---`;
-
-        const client = new OpenAI({
-            baseURL: 'https://openrouter.ai/api/v1',
-            apiKey: vars.openRouter.key,
-        });
-
-        const completion = await client.chat.completions.create({
+        const client = new ChatOpenAI({
+            configuration: {
+                baseURL: 'https://openrouter.ai/api/v1',
+                apiKey: vars.openRouter.key,
+            },
             model: 'x-ai/grok-3-beta',
-            messages: [
-                {
-                    role: 'user',
-                    content: prompt,
-                },
-            ],
         });
+
+        const completion = await client.invoke(prompt);
 
         const result = getObjFromLLM({
-            llmResult: completion.choices[0].message.content as string,
+            llmResult: completion.content,
         });
 
         this.logger.log(`initiate idea ${result.obj.shouldInitiate}, ${result.obj.initiateMessage}`);
@@ -196,27 +190,22 @@ ${rag[1]}
 
     public getAnswerSplit = async (answer:string):Promise<string[]> => {
         try {
-            const client = new OpenAI({
-                baseURL: 'https://openrouter.ai/api/v1',
-                apiKey: vars.openRouter.key,
+            const client = new ChatOpenAI({
+                configuration: {
+                    baseURL: 'https://openrouter.ai/api/v1',
+                    apiKey: vars.openRouter.key,
+                },
+                model: 'x-ai/grok-3-beta',
             });
 
             const prompt = 'Разбей строку на сообщения как обычно пишут люди в мессенджерах, разбивай по смыслу, так-же эмодзи тоже стоит выделять отдельно (опять же если это будет выглядеть странно, то не выделяй),  верни ответ в виде JSON объекта: { "arr": string[] }, где arr это разбитые строки. Не меня строку, только разбивай её.\n' +
                 '\n' +
                 'Разбей следующуй строку: \n';
 
-            const completion = await client.chat.completions.create({
-                model: 'x-ai/grok-3-beta',
-                messages: [
-                    {
-                        role: 'user',
-                        content: prompt + answer,
-                    },
-                ],
-            });
+            const completion = await client.invoke(prompt + answer);
 
             const result = getObjFromLLM({
-                llmResult: completion.choices[0].message.content as string,
+                llmResult: completion.content,
             });
 
             if (result.isValid && result.obj.arr) {
