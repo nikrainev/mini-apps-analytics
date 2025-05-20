@@ -109,6 +109,8 @@ export class ChatService {
         shouldInitiate: boolean,
         message: string,
     }> => {
+        this.logger.log('start intiate');
+
         const prompt =  `Перед тобой промпт содержаший историю текущего диалога, два примера с похожими реальными диалогами. Твоя задача придумать инициативное сообщения для LLM которая ведет диалог (в текущем диалоге - Я это ответы LLM). Ответь в формате JSON объекта - { "shouldInitiate": true, "initiateMessage": "" }, shouldInitiate - это поле отвечающие нужно ли LLM инциаровать общение или нет (предлагай инциировать общение когда кажется это уместно в диалоге есть очевидное продлжение или диалог со строны LLM кажется слишком неициативный), initiateMessage - инициативное сообщение от LLM, сообщение будет добавлено в контекcт LLM, не будь навящим не повторяй вопросы по многу раз, если человек на них не отвечает. Кроме вопросов еще можешь придумать сообщения просто о новой теме (близкой диалогу) 
 Напиши в стиле ответов (твои ответы это, то что после Я:) из следующих диалогов: 
 ${rag.join('\n')}
@@ -207,6 +209,8 @@ ${rag[1]}
             const result = getObjFromLLM({
                 llmResult: completion.content,
             });
+
+            this.logger.log(`success split ${result.obj}, ${completion.content}`);
 
             if (result.isValid && result.obj.arr) {
                 return result.obj.arr;
