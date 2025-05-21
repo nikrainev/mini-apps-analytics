@@ -290,7 +290,7 @@ ${rag[1]}
                 baseURL: vars.nebius.baseUrl,
                 apiKey: vars.nebius.secretKey,
             },
-            model: FineTunedModels.BashirLlama70b,
+            model: FineTunedModels.Llama70bAllMy,
             temperature: 0.9,
             topP: 0.9,
         });
