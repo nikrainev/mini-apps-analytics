@@ -4,6 +4,7 @@ import { vars } from 'config/vars';
 
 export enum FineTunedModels {
     BashirLlama70b = 'meta-llama/Llama-3.3-70B-Instruct-LoRa:bashir-lora-EpfX',
+    OlegOwnerLlama70b = 'meta-llama/Llama-3.3-70B-Instruct-LoRa:oleg-owner-khdl',
     Llama70bAllMy = 'meta-llama/Llama-3.3-70B-Instruct-LoRa:all-dialogs-MRct'
 }
 

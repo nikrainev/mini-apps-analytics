@@ -16,7 +16,7 @@ import { countMessagesTime } from './queries/countMessagesTime';
 import { getMessagesScheme, SourceMessage } from './utils/getMessagesScheme';
 import { calculateAverageOfSegments } from './utils/calculateAverageOfSegments';
 
-export const ME_USER_ID = 'user287716767';
+export const ME_USER_ID = 'user5051580619';
 
 export class DialogsDataService {
     constructor(
