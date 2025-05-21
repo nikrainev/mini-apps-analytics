@@ -17,13 +17,10 @@ import mongoose, { Model } from 'mongoose';
 import { llmContextToVectorData } from '../dialogsData/utils/llmContextToVectorData';
 import { ChatGenerationPromptInputs, MessengerPrompts } from './utils/MessengerPrompt';
 import { getObjFromLLM } from './utils/getObjFromLLM';
-import { probabilityCheck } from './utils/propablityCheck';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { splitTextIntoParts } from './utils/splitTextIntoPairs';
 import { getSendDelay } from './utils/getSendDelay';
-import { ChatXAI } from "@langchain/xai";
-
 
 
 @Injectable()
