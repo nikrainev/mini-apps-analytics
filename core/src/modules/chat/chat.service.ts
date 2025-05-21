@@ -349,6 +349,7 @@ ${rag[1]}
                 humanMessage,
             });
 
+            this.logger.log('llmAnswer', llmAnswer);
             const resultAnswer = await this.evaluateLLMAnswer({
                 currentDialog: currentChatHistory + ` \n Я: ${llmAnswer.response}`,
             });
