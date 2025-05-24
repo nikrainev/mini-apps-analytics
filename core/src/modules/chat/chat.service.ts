@@ -285,7 +285,7 @@ ${rag[1]}
     }
 
     private async tryGetAnswerFromLLM({ chatId, prompt, humanMessage }:{ chatId: string, prompt: string, humanMessage: string }):Promise<IResponseWithActions> {
-        this.llm = new ChatOpenAI({
+        /*this.llm = new ChatOpenAI({
             configuration: {
                 baseURL: vars.nebius.baseUrl,
                 apiKey: vars.nebius.secretKey,
@@ -294,7 +294,7 @@ ${rag[1]}
             temperature: 0.9,
             topP: 0.9,
             maxTokens: 50,
-        });
+        })*/
         /*
             Good For Bashir:
             temperature: 0.8,
@@ -305,11 +305,11 @@ ${rag[1]}
             topP: 0.9,
          */
 
-        /*this.llm = new ChatOpenAI({
+        this.llm = new ChatOpenAI({
             model: 'gpt-4.1',
             temperature: 1.2,
             topP: 0.9,
-        });*/
+        });
 
         const chain = new LangChainChatEngine({
             llm: this.llm,
