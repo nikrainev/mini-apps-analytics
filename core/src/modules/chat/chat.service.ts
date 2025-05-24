@@ -290,9 +290,10 @@ ${rag[1]}
                 baseURL: vars.nebius.baseUrl,
                 apiKey: vars.nebius.secretKey,
             },
-            model: FineTunedModels.OlegOwnerLlama70b,
+            model: 'meta-llama/Llama-3.3-70B-Instruct',
             temperature: 0.9,
             topP: 0.9,
+            maxTokens: 50,
         });
         /*
             Good For Bashir:
@@ -303,6 +304,12 @@ ${rag[1]}
             temperature: 0.9,
             topP: 0.9,
          */
+
+        /*this.llm = new ChatOpenAI({
+            model: 'gpt-4.1',
+            temperature: 1.2,
+            topP: 0.9,
+        });*/
 
         const chain = new LangChainChatEngine({
             llm: this.llm,
